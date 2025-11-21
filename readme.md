@@ -20,8 +20,10 @@
     *   打字机文本效果与复古 8-bit 音效合成。
     *   多分支剧情：包含 Happy End, Bad End 以及隐藏的 True End。
 *   **彩蛋系统**：
-    *   DVD 碰撞屏幕保护程序（作为 True End 触发器）。
+    <!--
+        *   DVD 碰撞屏幕保护程序（作为 True End 触发器）。
     *   逼真的伪装系统警告界面。
+-->
 *   **响应式设计**：适配桌面端与移动端浏览。
 ——————————————————
 ## 🚀 如何运行 (How to Run)
@@ -34,4 +36,5 @@
    ```bash
 
    git clone https://github.com/你的用户名/Xi-Love-Blog.git
+
 
