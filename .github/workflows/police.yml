@@ -1,0 +1,101 @@
+name: Cyber Police (Giscus Monitor)
+
+on:
+  discussion_comment:
+    types: [created, edited]
+
+jobs:
+  censorship:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check and Delete
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.CYBER_POLICE_TOKEN }}
+          script: |
+            // ================= 配置区域 =================
+            
+            // 1. 违禁词库 (支持模糊匹配)
+            const forbiddenWords = [
+              "包子", "维尼", "独裁", "下台", "垃圾", "傻逼", "妹妹", "下面","流水","幼女","人兽","呦呦","呦女","萝莉", "滑稽",       
+              "8964", "坦", "克", "习猪头", "死胖子", "SB", "NMSL","笑死","死妈","野种","妈逼","野爹","支那","汉畜"
+            ];
+
+// 2. 处决文案库 (随机抽取一条)
+            const warningMessages = [
+              `该用户的评论因包含 **反动/侮辱性词汇** 已被处决`,
+              
+              `> **🚫 思想审查未通过**\n> 该言论包含危险关键词，系统已记录IP发往国家安全局数据库`,
+              
+              `> **❌ DATA EXPUNGED**\n> [数据删除] 该用户因涉嫌颠覆国家政权已被禁言。`,
+
+               `🤖：支那猪滚`,
+              
+              `⚠️ 警告：该不当言论已被dicksickAI自动拦截，此用户器官排队顺位已提前。`,
+              
+              `> **⚠️ 404 NOT FOUND**\n> 这里的评论静悄悄，只有以习近平同志为核心的领航掌舵下的暖流在涌动。`
+            ];
+
+            // 随机选一条
+            const warningMessage = warningMessages[Math.floor(Math.random() * warningMessages.length)] + "\n\n*[此消息由 Cyber-Police 自动生成]*";
+
+            // ================= 执法逻辑 (勿动) =================
+            
+            const body = context.payload.comment.body;
+            const commentId = context.payload.comment.node_id;
+            const discussionId = context.payload.discussion.node_id;
+            const author = context.payload.comment.user.login;
+
+            // 机器人不查自己，防止死循环
+            if (author === "github-actions[bot]" || author === context.actor) {
+              // 注意：如果你想让自己(号主)也被查，把 `|| author === context.actor` 去掉
+              // 目前设定是：号主发的不查
+              return; 
+            }
+
+            console.log(`Checking comment from ${author}: ${body}`);
+
+            // 检查违禁词
+            const hasForbiddenWord = forbiddenWords.some(word => body.includes(word));
+
+            if (hasForbiddenWord) {
+              console.log("🚨 FOUND FORBIDDEN WORD! EXECUTING DELETION...");
+
+              // 1. 删除该评论 (使用 GraphQL API)
+              const deleteMutation = `
+                mutation($id: ID!) {
+                  deleteDiscussionComment(input: {id: $id}) {
+                    clientMutationId
+                  }
+                }
+              `;
+              
+              try {
+                await github.graphql(deleteMutation, { id: commentId });
+                console.log("✅ Comment deleted.");
+              } catch (error) {
+                console.log("❌ Failed to delete comment (Check Token permissions): " + error);
+              }
+
+              // 2. 发送警告 (使用 GraphQL API)
+              const addCommentMutation = `
+                mutation($discussionId: ID!, $body: String!) {
+                  addDiscussionComment(input: {discussionId: $discussionId, body: $body}) {
+                    comment { id }
+                  }
+                }
+              `;
+
+              try {
+                await github.graphql(addCommentMutation, { 
+                  discussionId: discussionId, 
+                  body: `@${author} \n` + warningMessage 
+                });
+                console.log("✅ Warning sent.");
+              } catch (error) {
+                console.log("❌ Failed to send warning: " + error);
+              }
+
+            } else {
+              console.log("✅ Comment is clean.");
+            }
