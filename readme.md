@@ -5,7 +5,11 @@
 ![Project Status](https://img.shields.io/badge/Status-Accelerator-ff007c)
 ![Style](https://img.shields.io/badge/Style-Vaporwave%20%2F%20Jirai--Kei-00f3ff)
 
-这是一个基于 HTML5, CSS3 和原生 JavaScript 构建的单页应用（SPA）。它结合了**粉色蒸汽波美学**、**地雷系少女风格**以及**政治讽刺迷因**，包含一个内置的 Galgame（文字冒险游戏）。
+这是一个基于 HTML5, CSS3 和原生 JavaScript ，代码全部由Gemini3构建的单页应用（SPA）。
+
+
+————————————ai生成的介绍
+它结合了**粉色蒸汽波美学**、**地雷系少女风格**以及**政治讽刺迷因**，包含一个内置的 Galgame（文字冒险游戏）。
 
 ## ✨ 特性 (Features)
 
@@ -18,7 +22,7 @@
     *   DVD 碰撞屏幕保护程序（作为 True End 触发器）。
     *   逼真的伪装系统警告界面。
 *   **响应式设计**：适配桌面端与移动端浏览。
-
+——————————————————
 ## 🚀 如何运行 (How to Run)
 
 ### 在线访问 (GitHub Pages)
@@ -27,4 +31,5 @@
 ### 本地运行
 1. 克隆本仓库：
    ```bash
+
    git clone https://github.com/你的用户名/Xi-Love-Blog.git
