@@ -8,7 +8,8 @@
 这是一个基于 HTML5, CSS3 和原生 JavaScript ，代码全部由Gemini3构建的单页应用（SPA）。
 
 
-————————————ai生成的介绍
+————————————ai生成的介绍-----懒得改了。。
+
 它结合了**粉色蒸汽波美学**、**地雷系少女风格**以及**政治讽刺迷因**，包含一个内置的 Galgame（文字冒险游戏）。
 
 ## ✨ 特性 (Features)
@@ -33,3 +34,4 @@
    ```bash
 
    git clone https://github.com/你的用户名/Xi-Love-Blog.git
+
