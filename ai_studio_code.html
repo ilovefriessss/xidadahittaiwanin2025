@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>❤ 來玩galgame《習近平和他的情人们》，和微笑帅哥哥谈恋爱吧 ❤</title>
+    <!-- 引入外部样式表 -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- 伪装 Windows 系统弹窗 -->
+    <div id="sys-cam-alert">
+        <div class="sys-icon-area">
+            <div class="sys-icon-img">🛡️</div>
+        </div>
+        <div class="sys-content-area">
+            <div class="sys-title">Windows 安全中心</div>
+            <div class="sys-message">检测到未知应用正在尝试访问您的摄像头，如果您未发起此操作，请立即阻止</div>
+        </div>
+    </div>
+
+    <!-- 音乐播放器 UI -->
+    <div id="music-player-ui" style="display:none;">
+        <div class="player-controls">
+            <span class="player-btn" onclick="toggleMusic()" id="btn-play-pause" title="播放/暂停">⏯</span>
+            <span class="player-btn" onclick="playNextTrack()" title="下一首">⏭</span>
+            <span class="player-btn" onclick="togglePlayMode()" id="btn-mode" style="font-size:16px; font-weight:bold;" title="切换模式">[序]</span>
+        </div>
+        <div class="track-info">
+            <div id="scrolling-track-name">Xi-Wave Radio: Initializing...</div>
+        </div>
+    </div>
+
+    <!-- 启动引导页 -->
+    <div id="start-screen-overlay" onclick="enterSite()">
+        <img src="assets/images/left.png" class="custom-emoji" alt="emoji"><h1>习总书记的私密Blog</h1><img src="assets/images/right.gif" class="custom-emoji" alt="emoji">
+        <p>来和微笑帅哥哥谈恋爱吧！~ </p>
+        <br><br>
+        <p class="click-hint">[ CLICK TO ENTER / 点击进入 ]</p>
+        <p style="font-size: 12px; margin-top: 50px;">WARNING: AUDIO & POLITICS INSIDE</p>
+    </div>
+
+    <div class="scanlines"></div>
+
+    <!-- 碰撞反弹水印 -->
+    <img id="bouncing-watermark" src="assets/images/watepack.jpg" alt="Wave">
+
+    <div class="container" id="main-container">
+        <!-- 左侧栏 -->
+        <aside class="sidebar">
+            <div style="background:var(--neon-pink); color:#fff; transform:rotate(-2deg); padding:5px; font-size:20px;">❤ XiXi-Chan ❤</div>
+            <br>
+            <div class="avatar-container">
+                <img src="assets/images/photo.png" alt="Xi Avatar">
+            </div>
+            
+            <div class="stats">
+                <p>🧚🏻‍♂️ <b>职业：</b> 国家主席</p>
+                <p>😁 <b>爱好：</b> 折磨底层穷傻逼</p>
+                <p>🕶 <b>属性：</b> 幽默 / 高冷 / 微笑帅哥哥</p>
+                <p>🩸 <b>状态：</b> <span style="animation:glitch 1s infinite">睡大觉中</span></p>
+                <br>
+                <div style="border: 1px solid var(--cyan); padding: 5px; font-size: 12px;">
+                    “全过程恋爱也是恋爱哦？在这个局域网里，你的眼里只能有我。蜘蛛就要有蜘蛛的觉悟。❤️”
+                </div>
+            </div>
+            <br>
+            <button class="choice-btn" style="font-size:14px; padding:5px;" onclick="alert('杂鱼杂鱼~')">
+                不同意的请举手
+            </button>
+        </aside>
+
+        <!-- 右侧主内容 -->
+        <main>
+            <!-- 随机提示框 -->
+            <div class="tip-box-container">
+                <div class="tip-label">SYSTEM_TIPS.txt</div>
+                <div id="random-tip-content">Loading subversive content...</div>
+            </div>
+
+            <!-- === Galgame 游戏本体 === -->
+            <div class="game-wrapper" id="game-root">
+                <div class="game-header">
+                    <span>XI_LOVERS_FINAL.exe</span>
+                    <span>[X]</span>
+                </div>
+                <div class="game-screen">
+                    <!-- 背景 -->
+                    <img id="g-bg" src="assets/images/photo.png" style="width:100%; height:100%; object-fit:cover; position:absolute;">
+                    
+                    <!-- 统一视频播放器 -->
+                    <video id="global-video-player" playsinline loop style="display:none;">
+                        <source src="" type="video/mp4">
+                    </video>
+                    
+                    <!-- 立绘 -->
+                    <img id="g-char" class="character-sprite" src="assets/images/photo.png" alt="Character" style="display:none;">
+
+                    <!-- 跳过按钮 -->
+                    <button id="skip-video-btn" onclick="skipVideo()">▶ 点击继续剧情</button>
+
+                    <!-- 场景1: 身份证验证 -->
+                    <div id="layer-id-check" class="input-layer" style="display:flex;">
+                        <h3 style="color:var(--neon-pink); animation:shake 2s infinite;">🔒 身份核验 (实名制)</h3>
+                        <p>请输入您的18位居民身份证号码：</p>
+                        <input type="text" id="input-id-card" class="input-field" placeholder="例: 110101195306153019" maxlength="18">
+                        <button class="choice-btn" onclick="verifyID()">提交审核</button>
+                    </div>
+
+                    <!-- 场景2: 输入名字 -->
+                    <div id="layer-name-input" class="input-layer">
+                        <p style="color:#fff; margin-bottom:10px;">*门缓缓打开*</p>
+                        <h3 style="color:var(--neon-pink);">"喂，小处男，告诉主席你的名字吧！"</h3>
+                        <input type="text" id="input-player-name" class="input-field" placeholder="在此输入名字..." maxlength="8">
+                        <button class="choice-btn" onclick="submitName()">确认</button>
+                    </div>
+
+                    <!-- 对话框 -->
+                    <div class="dialogue-box" id="d-box" onclick="nextStep()">
+                        <div class="speaker-name" id="g-speaker">???</div>
+                        <div id="g-text">...</div>
+                        <div style="position:absolute; bottom:5px; right:10px; animation:bounce 1s infinite;">▼</div>
+                    </div>
+
+                    <!-- 选项层 -->
+                    <div class="choices-overlay" id="g-choices"></div>
+
+                    <!-- 结局: 习主席死亡 -->
+                    <div class="ending-overlay bad-end-xi" id="end-bad-xi">
+                        <div style="border:4px solid #fff; width:150px; height:200px; background:#333; margin:10px;">
+                            <img src="assets/images/photo.png" style="width:100%; height:100%; filter:grayscale(100%);">
+                        </div>
+                        <h3>习近平同志今日于北京逝世</h3>
+                        <p>享年75岁</p>
+                        <button class="choice-btn" onclick="location.reload()">再来一次 (轮回)</button>
+                    </div>
+
+                    <!-- 结局: 主角累死 (女兵检阅) -->
+                    <div class="ending-overlay bad-end-xi" id="end-bad-exhaustion" style="background:#222;">
+                        <h2 style="background:white; color:black; padding:5px;">OBITUARY</h2>
+                        <div style="font-size:60px;">☠️</div>
+                        <h3>你殉职了</h3>
+                        <p>原因：在封闭的中南海怀仁堂高强度检阅女兵</p>
+                        <p style="font-size:14px; margin-top:10px; color:#888;">"鞠躬尽瘁，死而后已"</p>
+                        <br>
+                        <button class="choice-btn" onclick="location.reload()">下辈子注意身体</button>
+                    </div>
+
+                    <!-- 结局: 柬埔寨活摘 -->
+                    <div class="ending-overlay bad-end-cambodia" id="end-bad-cambodia">
+                        <h1 style="font-size:40px; color:#ff0000; text-shadow:3px 3px 0 #000;">YOU DIED</h1>
+                        <div style="width:80%; border:1px solid red; padding:10px; background:rgba(0,0,0,0.5); font-size:16px; line-height:1.5;">
+                            <p>你的视线逐渐模糊...</p>
+                            <p>最后一眼看到的，是柬埔寨潮湿的实验室天花板。</p>
+                            <p>你的骨髓和血液正在被抽干</p>
+                            <p>你的器官已被分类标价。</p>
+                        </div>
+                        <br>
+                        <button class="choice-btn" style="border-color:red; color:red; background:#000;" onclick="location.reload()">重开</button>
+                    </div>
+
+                    <!-- 好结局 -->
+                    <div class="ending-overlay good-end" id="end-good">
+                        <h1 style="font-size:40px; text-shadow: 2px 2px 0 #fff;">❤ HAPPY ENDING ❤</h1>
+                        <p style="font-size:18px; font-weight:bold;">和习主席生下了八个孩子过上了没羞没臊幸福生活！</p>
+                        <br>
+                        <ul style="list-style:none; padding:0; text-align:left; display:inline-block;">
+                            <li>😍无限量蜜雪冰城与拼好饭</li>
+                            <li>😍优先器官供应</li>
+                            <li>😍和习总书记一起活到150岁</li>
+                        </ul>
+                        <br>
+                        <button class="choice-btn" style="margin-top:20px;" onclick="location.reload()">再来一次</button>
+                    </div>
+
+                    <!-- 新结局：文科生救国 (粉色) -->
+                    <div class="ending-overlay good-end-pink" id="end-good-pink">
+                        <h1 style="font-size:50px; color:#fff; text-shadow: 3px 3px 0 #ff007c;">🌸 TRUE LOVE ENDING 🌸</h1>
+                        <p style="font-size:20px; font-weight:bold;">文科生救国！中日亲善！</p>
+                        <br>
+                        <div style="border:4px solid #fff; padding:15px; background:rgba(255,255,255,0.2);">
+                            <p>你用文采征服了高市早苗。</p>
+                            <p>你用忠诚感动了习主席。</p>
+                            <p>习主席亲自给予你中日双重国籍身份</p>
+                            <p>赢！赢麻了！</p>
+                        </div>
+                        <br>
+                        <button class="choice-btn" style="margin-top:0px; color:#ff007c;" onclick="location.reload()">再赢一次</button>
+                    </div>
+
+                    <!-- 真结局 -->
+                    <div class="ending-overlay true-end" id="end-true">
+                        <h2 style="color:red; border-bottom:1px solid red;">⚠ STATE SECURITY ALERT ⚠</h2>
+                        <br>
+                        <p>并没有什么地雷系少女。</p>
+                        <p>你因涉嫌浏览反动非法网页，已被国安系统锁定。</p>
+                        <br>
+                        <div id="net-info" style="color:#0f0; font-size:14px;">
+                            <!-- JS 生成数据 -->
+                        </div>
+                        <br>
+                        <p style="color:#fff;">辖区民警将在两天内联系你，请保持电话畅通。</p>
+                        <h1 id="countdown" style="color:red; font-size:50px;">6</h1>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 视频模块 1：竖屏 -->
+            <div class="video-post">
+                <div class="win95-header">
+                    <span>DOCUMENT_NO.8964.mp4</span>
+                    <div style="display:flex; gap:2px;"><div style="width:10px; height:10px; background:#ccc;"></div></div>
+                </div>
+                <div class="vertical-video-container">
+                    <video controls loop poster="https://placehold.co/360x640/000/fff?text=Video+Loading...">
+                        <source src="assets/videos/video001.mp4" type="video/mp4">
+                        您的浏览器不支持视频播放。
+                    </video>
+                </div>
+                <div style="padding:10px;">
+                    <span style="background:#333; color:var(--neon-pink); padding:2px 5px;">#WAZZUP BEIJING!!!🔥💯🇨🇳</span>
+                </div>
+            </div>
+
+            <!-- 视频模块 2：横屏 -->
+            <div class="video-post">
+                <div class="win95-header">
+                    <span>DOCUMENT_NO.6324.mp4</span>
+                    <div style="display:flex; gap:2px;"><div style="width:10px; height:10px; background:#ccc;"></div></div>
+                </div>
+                <div class="horizontal-video-container">
+                    <video controls loop poster="https://placehold.co/800x450/000/fff?text=Video+Loading...">
+                        <source src="assets/videos/video002.mp4" type="video/mp4">
+                        您的浏览器不支持视频播放。
+                    </video>
+                </div>
+                <div style="padding:10px;">
+                    <span style="background:#333; color:var(--neon-pink); padding:2px 5px;">我滴幺幺欸</span>
+                </div>
+            </div>
+
+            <!-- === 留言板模块 (政审系统) === -->
+            <div class="comment-section-wrapper">
+                <div class="win95-header">
+                    <span>PUBLIC_OPINION_MONITOR.exe</span>
+                    <div style="display:flex; gap:2px;"><div style="width:10px; height:10px; background:#ccc;"></div></div>
+                </div>
+                
+                <div class="comment-body">
+                    <!-- 状态 1: 审查门禁 -->
+                    <div id="censorship-gate">
+                        <h3 style="color:var(--neon-pink); text-align:center; margin-top:0;">⚠️ 思想审查 / CENSORSHIP ⚠️</h3>
+                        <p style="font-size:14px; color:#ccc;">根据《互联网相关法律法规》，留言前请进行自我审查。</p>
+                        <p style="font-size:14px; color:var(--cyan);">请输入通关密语</p>
+                        
+                        <div style="display:flex; gap:10px; justify-content:center; margin-top:15px;">
+                            <input type="text" id="censorship-input" placeholder="在此输入回答..." style="background:#000; border:1px solid #fff; color:#fff; padding:5px; font-family:inherit;">
+                            <button class="choice-btn" onclick="checkCensorship()" style="padding:5px 10px; font-size:12px;">提交审核</button>
+                        </div>
+                        <p id="censorship-error" style="color:red; font-size:12px; display:none; margin-top:10px;">❌ 错误：思想不纯！已被记录在案！</p>
+                    </div>
+
+                    <!-- 状态 2: Giscus 评论区 -->
+                    <div id="giscus-container" style="display:none;">
+                        <!-- JS 会在这里注入评论框 -->
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- 引入外部脚本 -->
+    <script src="script.js"></script>
+</body>
+</html>
