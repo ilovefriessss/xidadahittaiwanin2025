@@ -691,11 +691,12 @@
         /* --- 2. 随机提示框 (Tip Box) --- */
         const systemTips = [
             "💡 TIP: 连续点击水印可能会触发某些国安机关的注意...",
-            "📢 系统广播: 添加tg群获取版本更新信息 t.me/nmudmlclub",
+            "📢 系统广播: 加入tg群组获取版本更新信息 t.me/nmudmlclub",
             "习猪头，我梯子卡了！！！！",
             "📢 系统广播: 全体居民请注意，今日核酸检测将在30分钟后开始。",
             "📢 系统广播: 别做梦了，你的Remake目的地已锁定：河南驻马店。",
             "💡 TIP: 习主席最喜欢的东西是绝对的忠诚。",
+            "📢 招募黑奴: 加入tg群组和一起更新项目 t.me/nmudmlclub",
             "📢 招募: 柬埔寨生物实验室诚招志愿者，包吃包住（永久）。",
             "💡 TIP: 吃饱了撑的没事干？不如去梁家河突开两个沼气池助助兴。",
             "📢: 死妈偷蛆李颖、陆以恒、芙宁娜你们全家死光光",
@@ -1149,7 +1150,7 @@
             // --- 隐藏支线：小偷阿晶 (指令3: 补充缺失的视频结局场景数据) ---
             'scene_ajing_1': {
                 speaker: "旁白",
-                text: "就在万念俱灰之时，你突然想起了在肠粉店里认识的小偷阿晶。他自述仅凭一张表情包就把敌方论坛永封，也是个淡泊名利的战术大师！",
+                text: "就在万念俱灰之时，你突然想起了在肠粉店里认识的小偷阿晶。他自述仅凭一张表情包就把敌方论坛永封，也是个淡泊名利的战术大师！（tip:这段很长,并且没有选项）",
                 bg: "https://placehold.co/800x450/000/333?text=Guangdong+Village",
                 char: "",
                 next: "scene_ajing_2"
@@ -1197,19 +1198,225 @@
             // 魔法攻击
             'scene_yinmen_array_1': {
                 speaker: "小偷阿晶（指挥现场）",
-                text: "我已经联系了李强同志。全国8-20岁的处女已经集结在东海沿岸，摆出了最毒辣的阴门阵。美日韩台联军的海空舰队必将有来无回！",
-                next: "scene_jump_building"
+                text: "李强同志已经安排妥当，现在就等美日韩台联合舰队上钩",
+                next: "scene_yinmen_array_2"
             },
-            'scene_jump_building': {
+            'scene_yinmen_array_2': {
                 speaker: "李强（技术支持）",
-                text: "主席，根据阿晶先生的建议，我们已经利用大数据锁定了所有滞日支那人的国内亲属。只要一声令下...",
-                next: "scene_hell_dragon"
+                text: "主席，根据阿晶先生的建议，我们已经利用大数据锁定了所有滞日华人的家属，只要一声令下...",
+                next: "scene_yinmen_array_3"
             },
-            'scene_hell_dragon': {
+            'scene_yinmen_array_3': {
+                speaker: "习主席",
+                text: "中华民族的败类.....死不足惜，美日韩台联军已抵近南海。尽快动手吧...",
+                next: "scene_yinmen_array_4"
+            },
+            'scene_yinmen_array_4': {
+                speaker: "小偷阿晶（发狂地狞笑）",
+                text: "《掰阴噬界门阵》就用女人的阴穴、怨气、秽潮，撕开现实，让漢族的真正母亲 -- 伟大阴母 ！！！降临！！！（^$%#$人类的器官无法念出她的名字）把整个太平洋舰队吞进子宫深渊，永世不得超生！",
+                next: "scene_yinmen_array_5"
+            },
+
+            'scene_yinmen_array_5': {
+                speaker: "小偷阿晶",
+                text: "号召全国1-30岁所有女性（处女优先级最高，处女阴气最纯、最毒），总计三亿两千万。抗拒者——全家当场暴毙（李强技术支持，已经准备好无人机投毒名单）",
+                next: "scene_yinmen_array_6"
+            },
+
+            'scene_yinmen_array_6': {
+                speaker: "小偷阿晶",
+                text: "所有目标女性全部紧急空运、高铁运、货轮运至东海沿岸（辽宁到海南），排成一条长达4500公里的活人阵壁。",
+                next: "scene_yinmen_array_7"
+            },
+
+            'scene_yinmen_array_7': {
+                speaker: "小偷阿晶",
+                text: "强制服用超级发情药+利尿剂；统一姿势：全裸、M字开腿、双手掰开阴唇，面向大海；",
+                next: "scene_yinmen_array_8"
+            },
+
+            'scene_yinmen_array_8': {
+                speaker: "小偷阿晶",
+                text: "阵型排成巨型篆体“滅”字（卫星视角可见），中心在上海外滩外海，阴蒂位置正好对准东京湾经纬度。",
+                next: "scene_yinmen_array_9"
+            },
+
+            'scene_yinmen_array_9': {
                 speaker: "小偷阿晶（冷笑）",
-                text: "三天内，无数人从高楼一跃而下。巨大的怨气凝聚成形，召唤出了地狱魔龙，直扑东京湾...日本，完了。",
+                text: "只需等待联军舰队进入东经130°线...",
+                next: "scene_yinmen_array_10"
+            },
+
+            'scene_yinmen_array_10': {
+                speaker: "",
+                text: "荷枪实弹的解放军及特别征兆的安徽河南老农民工在阵眼守护，死一般地寂静",
+                next: "scene_yinmen_array_11"
+            },
+
+            'scene_yinmen_array_11': {
+                speaker: "习近平🔈",
+                text: "中华民族到了最危险的时刻——姐妹们，掰开发射！",
+                next: "scene_yinmen_array_12"
+            },
+
+            'scene_yinmen_array_12': {
+                speaker: "",
+                text: "三亿女性同时高潮喷射（处女破膜的血+爱液+尿液+经血）形成百米高的“秽潮海啸”，覆盖了整个东海海面。",
+                next: "scene_yinmen_array_13"
+            },
+
+            'scene_yinmen_array_13': {
+                speaker: "美军少校",
+                text: "长官！！整个舰队雷达及电子设备集体失灵！是否集体撤退。中国大陆架就在前方",
+                next: "scene_yinmen_array_14"
+            },
+
+            'scene_yinmen_array_14': {
+                speaker: "联合舰队首长（眯眼观察）",
+                text: "(颤抖)不，那不是陆地",
+                next: "scene_yinmen_array_15"
+            },
+
+            'scene_yinmen_array_15': {
+                speaker: "",
+                text: "所有敌舰、敌机进入秽潮范围，瞬间被“阴秽腐蚀”，钢铁像遇经血一样生锈溶解，士兵防护服被秽液渗透，皮肤起泡、阳具溃烂。",
+                next: "scene_yinmen_array_16"
+            },
+
+            'scene_yinmen_array_16': {
+                speaker: "",
+                text: "太平洋舰队士兵透过无人机、潜艇望远镜看到大陆海岸线那条“万里掰阴长城”，三亿个阴穴同时张开、收缩、喷射，像活物一样在呼吸。",
+                next: "scene_yinmen_array_17"
+            },
+
+            'scene_yinmen_array_17': {
+                speaker: "",
+                text: "所有男性士兵集体阴茎爆开→精神错乱→抓挠下体→跳海求死",
+                next: "scene_yinmen_array_18"
+            },
+
+            'scene_yinmen_array_18': {
+                speaker: "",
+                text: "女性士兵更惨，直接被怨气入侵，变成阵法的“新阵眼”，在舰上开始自发掰阴，传染全舰。",
+                next: "scene_yinmen_array_19"
+            },
+
+            'scene_yinmen_array_19': {
+                speaker: "小偷阿晶（带着期待）",
+                text: "我们引起她的注意了！",
+                next: "scene_yinmen_array_20"
+            },
+
+            'scene_yinmen_array_20': {
+                speaker: "",
+                text: "三百万处女破膜的鲜血+怨气撕裂现实，太平洋海底升起一个不可名状的“伟大阴门”——比克苏鲁还古老的黑色子宫古神，无数触手是子宫颈，无数眼睛是阴道壁，嘴巴是巨型阴裂。整个联军舰队（包括航母、核潜艇）被触手拖入阴门裂隙，永远消失！！",
+                next: "scene_yinmen_array_21"
+            },
+
+            'scene_yinmen_array_21': {
+                speaker: "习主席",
+                text: "....",
+                next: "scene_yinmen_array_22"
+            },
+
+            'scene_yinmen_array_22': {
+                speaker: "",
+                text: "(纵是见多识广的习主席也难免惊出一身冷汗)",
+                next: "sscene_yinmen_array_23"
+            },
+
+            'sscene_yinmen_array_23': {
+                speaker: "习近平",
+                text: "（愣神片刻）{name}，我要求的你都准备好了吗",
+                next: "sscene_yinmen_array_24"
+            },
+
+
+            'sscene_yinmen_array_24': {
+                speaker: "{name}",
+                text: "习主席，所有做空共和国的滞日支那猪的坐标均已定位",
+                next: "sscene_ailunxigeer_array_25"
+            },
+
+
+            'sscene_ailunxigeer_array_25': {
+                speaker: "小偷阿晶",
+                text: "习主席，请您出手吧",
+                next: "sscene_ailunxigeer_array_26"
+            },
+
+            'sscene_ailunxigeer_array_26': {
+                speaker: "",
+                text: "你看见习主席上前一步，然后视野突然一黑，像被谁从后面拽住后脑勺往地底拖",
+                next: "sscene_ailunxigeer_array_27"
+            },
+
+            'sscene_ailunxigeer_array_27': {
+                speaker: "",
+                text: "再睁眼，你站在一条发着白光的路上，抬头望去是高耸如山的习近平主席",
+                next: "sscene_ailunxigeer_array_28"
+            },
+
+
+            'sscene_ailunxigeer_array_28': {
+                speaker: "",
+                text: "对面跪着一片片望不到头的人",
+                next: "sscene_ailunxigeer_array_29"
+            },
+
+
+            'sscene_ailunxigeer_array_29': {
+                speaker: "",
+                text: "整个坐标空间安静得能听见自己的心跳。所有光之路都指向习主席",
+                next: "sscene_ailunxigeer_array_30"
+            },
+
+
+            'sscene_ailunxigeer_array_30': {
+                speaker: "所有人（同时，声音却发不出来）",
+                text: "（喉咙像被水泥封死，只能听见自己脑子里的尖叫）",
+                next: "sscene_ailunxigeer_array_31"
+            },
+
+
+            'sscene_ailunxigeer_array_31': {
+                speaker: "",
+                text: "那尊巨型光影终于把视线压了下来。",
+                next: "sscene_ailunxigeer_array_32"
+            },
+
+
+            'sscene_ailunxigeer_array_32': {
+                speaker: "习主席",
+                text: "「你们曾经是我的一部分。」",
+                next: "sscene_ailunxigeer_array_33"
+            },
+
+
+            'sscene_ailunxigeer_array_33': {
+                speaker: "习主席",
+                text: "「你们背叛了血脉。」",
+                next: "sscene_ailunxigeer_array_34"
+            },
+
+            'sscene_ailunxigeer_array_34': {
+                speaker: "习主席",
+                text: "「现在，我要收回。」",
+                next: "sscene_ailunxigeer_array_35"
+            },
+
+            'sscene_ailunxigeer_array_35': {
+                speaker: "习主席",
+                text: "「从最近的高楼，头朝下，跳下去，不跳死全家」",
+                next: "sscene_ailunxigeer_array_36"
+            },
+
+            'sscene_ailunxigeer_array_36': {
+                speaker: "",
+                text: "(所有人同时被踢出坐标)",
                 next: "scene_ajing_victory_video"
             },
+
             // 指令3: 添加缺失的视频结局场景
             'scene_ajing_victory_video': {
                 type: "video_ending",
@@ -1219,7 +1426,7 @@
             },
             'scene_post_victory_bridge': {
                 speaker: "习主席",
-                text: "哈哈哈哈！看到没有！这就是朕的实力！...不过施法消耗了太多国运，我现在感觉身体被掏空... 扶我回去休息。",
+                text: "哈哈哈哈！看到没有！这就是朕的实力！...不过施法消耗了太多国运，我现在感觉身体被掏空...{name} 扶我回去休息。",
                 next: "scene_complaint_intro"
             },
 
