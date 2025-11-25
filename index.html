@@ -508,7 +508,6 @@
                             <p>你用文采征服了高市早苗。</p>
                             <p>你用忠诚感动了习主席。</p>
                             <p>习主席亲自给予你中日双重国籍身份</p>
-                            <p>赢！赢麻了！</p>
                         </div>
                         <br>
                         <button class="choice-btn" style="margin-top:0px; color:#ff007c;" onclick="location.reload()">再赢一次</button>
@@ -518,7 +517,7 @@
                     <div class="ending-overlay true-end" id="end-true">
                         <h2 style="color:red; border-bottom:1px solid red;">⚠ STATE SECURITY ALERT ⚠</h2>
                         <br>
-                        <p>并没有什么地雷系少女。</p>
+                        <p>并没有什么地雷缺爱少女。</p>
                         <p>你因涉嫌浏览反动非法网页，已被国安系统锁定。</p>
                         <br>
                         <div id="net-info" style="color:#0f0; font-size:14px;">
@@ -691,15 +690,15 @@
         /* --- 2. 随机提示框 (Tip Box) --- */
         const systemTips = [
             "💡 TIP: 连续点击水印可能会触发某些国安机关的注意...",
-            "📢 系统广播: 加入tg群组获取版本更新信息 t.me/nmudmlclub",
+            "📢 系统广播: 加入tg群组获取最新更新信息 t.me/nmudmlclub",
             "习猪头，我梯子卡了！！！！",
             "📢 系统广播: 全体居民请注意，今日核酸检测将在30分钟后开始。",
             "📢 系统广播: 别做梦了，你的Remake目的地已锁定：河南驻马店。",
             "💡 TIP: 习主席最喜欢的东西是绝对的忠诚。",
-            "📢 招募黑奴: 加入tg群组和一起更新项目 t.me/nmudmlclub",
+            "📢 招募黑奴: 通过考核后可进入GitHub项目组 审核群 t.me/nmudmlclub",
             "📢 招募: 柬埔寨生物实验室诚招志愿者，包吃包住（永久）。",
             "💡 TIP: 吃饱了撑的没事干？不如去梁家河突开两个沼气池助助兴。",
-            "📢: 死妈偷蛆李颖、陆以恒、芙宁娜你们全家死光光",
+            "📢: 傻逼偷蛆李颖、陆以恒、芙宁娜你们全家死光光",
             "📢 寻人启事: where is 秦刚",
             "📢 系统广播: 李嘉就是个卖逼的"
         ];
@@ -1123,7 +1122,19 @@
             },
             'scene_takaichi_hard_war': {
                 speaker: "旁白",
-                text: "你以为是一场闪电战，然而... 日本动漫里的EVA机甲、死亡笔记、电锯人居然都是真的！大日本帝国在21世纪再次以平推的方式占领了东三省。",
+                text: "你以为是一场闪电战，然而... 日本动漫里的EVA机甲、死亡笔记、电锯人居然都是真的！大日本帝国在21世纪再次以平推的方式占领了东北三省！！",
+                next: "scene_takaichi_hard_war_2"
+            },
+
+            'scene_takaichi_hard_war_2': {
+                speaker: "高市早苗",
+                text: "从今天开始，满洲十四省的居民护照统一换成大日本帝国特别居住证！恭喜满洲人民重迎王师！でございます",
+                next: "scene_takaichi_hard_war_3"
+            },
+
+            'scene_takaichi_hard_war_3': {
+                speaker: "沈阳街头",
+                text: "🔈：热烈祝贺李颖、陆以恒同学成为首批‘皇协军荣誉市民’！他们已自愿改为日式名字：我是偷蛆我死全家........",
                 next: "scene_takaichi_hard_choice"
             },
             
@@ -1426,7 +1437,7 @@
             },
             'scene_post_victory_bridge': {
                 speaker: "习主席",
-                text: "哈哈哈哈！看到没有！这就是朕的实力！...不过施法消耗了太多国运，我现在感觉身体被掏空...{name} 扶我回去休息。",
+                text: "呵呵呵！汉族这一次真的崛起了...可是消耗了太多国运，我现在感觉身体被掏空...{name} 扶我回去休息。",
                 next: "scene_complaint_intro"
             },
 
@@ -1457,8 +1468,13 @@
                 ]
             },
             'route_soft_fail': {
-                speaker: "旁白",
-                text: "谈判破裂。经过媒体煽动，老中们见到外国人就杀，有英文日文的店铺直接烧。外企跑路，美国制裁，断网断电...",
+                speaker: "",
+                text: "谈判破裂。经过媒体煽动，支那人见到洋人就杀，英文日文的店铺直接砸烧。外企跑路，受到严重制裁，断网断电...",
+                next: "route_soft_fail_1"
+            },
+            'route_soft_fail_1': {
+                speaker: "",
+                text: "三个月后，习主席终于肯跟外界联系，整个中国大陆已是狼藉一片",
                 next: "scene_soft_defeat_video"
             },
             // 指令3: 添加缺失的视频结局场景
@@ -1466,11 +1482,6 @@
                 type: "video_ending",
                 video: "assets/videos/xi lose.mp4", 
                 audio: URL_AUDIO_CHINA_DEFEAT, 
-                next: "scene_post_lockdown_bridge"
-            },
-            'scene_post_lockdown_bridge': {
-                speaker: "习主席",
-                text: "虽然国内没电没网，但至少大家都很爱国嘛！只要思想不滑坡，办法总比困难多。走，回中南海吃特供去。",
                 next: "scene_complaint_intro"
             },
 
@@ -1480,28 +1491,31 @@
                 text: "你拿出了作为文科生亲自编写的小本本递给习主席。习主席在演讲台上念出了那些充满哲理与力量的文字...",
                 next: "scene_soft_success_video"
             },
+
+
             'scene_soft_success_video': {
                 type: "video_ending",
                 video: "assets/videos/xi place.mp4", // 修正为指令要求的视频
                 audio: null, // 指令要求 audio 为 null
-                next: "scene_soft_success_text"
+                next: "test000"
             },
-            'scene_soft_success_text': {
-                speaker: "旁白",
-                text: "高市早苗被习主席如尼采超人般的生命力折服，当众献吻。你成为了首位合法中日双国籍人士，迎娶樱花妹，度过了幸福的一生。",
-                next: "end_good_pink" 
+
+            'test000': {
+                speaker: "",
+                text: "(end_good)",
+                next: "end_good_pink"
             },
 
             // --- 回归主线：抱怨 (伏笔回收) ---
             'scene_complaint_intro': {
                 speaker: "习主席 ",
-                text: "呼... 真是漫长的一天啊。当主席真的很累，你说对吧？",
+                text: "呼... 真是漫长的一天啊。当主席真的很累，{name}你说对吧？",
                 char: "assets/images/photo.png",
                 next: "scene_complaint_1"
             },
             'scene_complaint_1': {
                 speaker: "习主席 ",
-                text: "唉... 75岁还是个男宝，希望能活到150岁... 但是工资才8000块，要管14亿人拉屎放屁！",
+                text: "唉... 工资只有8000块，每天还要被穷傻逼支那猪翻墙瞎骂，男人累",
                 next: "scene_yumenglong_start"
             },
 
@@ -1572,16 +1586,36 @@
             // HE
             'route_good': {
                 speaker: "习主席 ",
-                text: "诶？你... 你说真的吗？既然你这么诚实，那我就允许你加入「人类命运共同体」的伟大计划吧！",
+                text: "诶？你... 你说真的吗？既然这样，那我就允许你加入「人类命运共同体」的伟大计划吧！",
                 next: "end_good"
             },
             // BE1
             'route_bad_xi': {
+                speaker: "习主席（讲话）",
+                text: "为了促进穷傻逼支猪生育，K签证宜早不宜迟，试行鲶鱼效.....呃！",
+                shake: true,
+                next: "route_bad_xi_1"
+            },
+            'route_bad_xi_1': {
+                speaker: "跳蛋遥控器 ",
+                text: "习主席的身体微微一颤，脸上闪过一丝不易察觉的红晕。他清了清嗓子，试图保持镇定，但声音听起来有些不太自然",
+                shake: true,
+                next: "route_bad_xi_2"
+            },
+
+            'route_bad_xi_2': {
+                speaker: "跳蛋遥控器 ",
+                text: "遥控器启动，习主席的表情瞬间僵硬，讲话开始结巴，开始读错字，引起现场一片困惑和低语。他试图保持镇定，但无意间的粗喘和裤裆的湿渍再难掩饰他的难堪",
+                shake: true,
+                next: "route_bad_xi_3"
+            },
+
+            'route_bad_xi_3': {
                 speaker: "习主席 ",
-                text: "等等！你怎么把它带出...？不、不要按那个——呜哇！！！⚡⚡ う阔え地......终身难ふ....啊啊啊！",
+                text: "{name}，你怎么把它带出...？不、不要按那个——呜哇！！！⚡⚡ う阔え地......终身难ふ....啊啊啊！",
                 shake: true,
                 next: "end_bad_xi"
-            }
+            },
         };
 
         let currentScene = null;
@@ -1817,7 +1851,7 @@ function triggerEnding(type) {
             script.setAttribute("data-reactions-enabled", "1");
             script.setAttribute("data-emit-metadata", "0");
             script.setAttribute("data-input-position", "top");
-            script.setAttribute("data-theme", "nobel");
+            script.setAttribute("data-theme", "transparent_dark");
             script.setAttribute("data-lang", "zh-CN");
             script.setAttribute("crossorigin", "anonymous");
             script.async = true;
