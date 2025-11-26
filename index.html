@@ -1225,7 +1225,7 @@
             },
             'scene_yinmen_array_4': {
                 speaker: "小偷阿晶（发狂地狞笑）",
-                text: "《掰阴噬界门阵》就用女人的阴穴、怨气、秽潮，撕开现实，让漢族的真正母亲 -- 伟大阴母<span style='animation: glitch 0.2s infinite; display:inline-block;'> @#%￥%@%@@%</span>！！！降临！！！把整个太平洋舰队吞进子宫深渊，永世不得超生！",
+                text: "《掰阴噬界门阵》就用女人的阴穴、怨气、秽潮，撕开现实，让漢族的真正母亲 -- 伟大阴母(人类的器官无法念出她的真实名字)！！！降临！！！就把整个太平洋舰队吞进子宫深渊，永世不得超生！",
                 next: "scene_yinmen_array_5"
             },
 
@@ -1478,19 +1478,19 @@
 
             'sscene_ailunxigeer_array_40': {
                 speaker: "小偷阿晶（瞳孔放大，声音亢奋）",
-                text: "最后由习主席在坐标中驱使同化的地底恶龙，摧毁日本列岛，让高市早苗",
+                text: "最后由习主席在坐标中驱使同化的地底恶龙，摧毁日本列岛，让高市早苗提头求饶！",
                 next: "sscene_ailunxigeer_array_41"
             },
 
             'sscene_ailunxigeer_array_41': {
                 speaker: "",
-                text: "地底魔龙在东京湾上空盘旋",
+                text: "(地底魔龙在东京湾上空盘旋)",
                 next: "sscene_ailunxigeer_array_42"
             },
 
             'sscene_ailunxigeer_array_42': {
                 speaker: "",
-                text: "伟大阴母轻哼着沉闷沙哑的曲调",
+                text: "(伟大阴母轻哼着沉闷沙哑的曲调)",
                 next: "sscene_ailunxigeer_array_43"
             },
 
@@ -1772,44 +1772,16 @@
             els.speaker.innerText = data.speaker.replace('{name}', playerName);
             let content = data.text.replace('{name}', playerName);
             els.text.innerHTML = ''; isTyping = true; let i = 0;
-// 修复后的打字机：能识别HTML标签，不再把代码当文字打出来
             function type() {
-                if (!isTyping) { 
-                    els.text.innerHTML = content; // 如果跳过，直接显示全部
-                    return; 
-                }
-                
+                if (!isTyping) { els.text.innerHTML = content; return; }
                 if (i < content.length) {
-                    let char = content.charAt(i);
-                    
-                    // 检测是否遇到了HTML标签的开头 '<'
-                    if (char === '<') {
-                        // 找到标签的结尾 '>'
-                        let tagEnd = content.indexOf('>', i);
-                        if (tagEnd !== -1) {
-                            // 如果找到了，把整个标签作为一坨直接加进去，不拆分
-                            els.text.innerHTML += content.substring(i, tagEnd + 1);
-                            i = tagEnd + 1; // 索引直接跳到标签后面
-                        } else {
-                            // 如果没找到结尾（格式错误），就按普通字符打
-                            els.text.innerHTML += char;
-                            i++;
-                        }
-                    } else {
-                        // 普通文字，正常打字
-                        els.text.innerHTML += char;
-                        i++;
-                    }
-
-                    // 播放打字音效 (每3个字响一声，防止太吵)
+                    els.text.innerHTML += content.charAt(i);
                     if (i % 3 === 0) AudioEngine.playTypeSound();
-                    
-                    // 继续打下一个字
-                    setTimeout(type, 30);
-                } else {
-                    isTyping = false;
-                }
+                    i++; setTimeout(type, 30);
+                } else isTyping = false;
             }
+            type();
+        }
 
 function triggerEnding(type) {
             // 隐藏对话框，暂停背景音乐
