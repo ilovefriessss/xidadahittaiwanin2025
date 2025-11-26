@@ -303,11 +303,12 @@
         }
         .comment-body {
             padding: 20px;
-            background: rgba(0, 0, 0, 0.8);
+            background: rgba(250, 240, 250, 0.8);
             background-image: linear-gradient(rgba(0, 255, 0, 0.03) 1px, transparent 1px),
             linear-gradient(90deg, rgba(0, 255, 0, 0.03) 1px, transparent 1px);
             background-size: 20px 20px;
             min-height: 300px;
+            border: 1px solid var(--cyan); /* 加个边框让它显眼点 */
         }
         #censorship-gate {
             border: 2px dashed var(--neon-pink);
@@ -1919,7 +1920,7 @@ function triggerEnding(type) {
             script.setAttribute("data-reactions-enabled", "1");
             script.setAttribute("data-emit-metadata", "0");
             script.setAttribute("data-input-position", "top");
-            script.setAttribute("data-theme", "white");
+            script.setAttribute("data-theme", "dark_dimmed");
             script.setAttribute("data-lang", "zh-CN");
             script.setAttribute("crossorigin", "anonymous");
             script.async = true;
