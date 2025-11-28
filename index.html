@@ -143,7 +143,25 @@
             display: none; grid-template-columns: 280px 1fr; gap: 20px;
             position: relative; z-index: 10;
         }
-        @media (max-width: 850px) { .container { grid-template-columns: 1fr; } }
+        /* --- 手机端适配增强 --- */
+        @media (max-width: 850px) { 
+            .container { 
+                grid-template-columns: 1fr; 
+            }
+            
+            /* 1. 增加手机上游戏画面的高度 */
+            .game-screen {
+                height: 550px !important; /* 原来是450px，改高一点 */
+            }
+
+            /* 2. 调整对话框，防止文字被切掉 */
+            .dialogue-box {
+                height: 140px !important; /* 对话框加高 */
+                bottom: 10px !important;
+                padding: 10px !important;
+                overflow-y: auto; /* 关键：如果文字实在太多，允许上下滚动查看！ */
+            }
+        }
 
         /* 侧边栏 */
         .sidebar {
@@ -598,6 +616,9 @@
 
     <!-- 脚本区域 -->
     <script>
+// --- 新增：音频状态管理器 ---
+       let currentVoice = null;   // 用于存当前的人物语音
+       let currentSceneBGM = null; // 用于存当前的场景BGM
         /* --- 0. 音频引擎 --- */
         const AudioEngine = {
             ctx: null,
@@ -895,14 +916,14 @@
                 speaker: "习主席 ",
                 text: "哼，{name}是吧？虽然名字听起来很蠢，但我勉强记在小本本上了。",
                 char: "assets/images/photo.png", 
+                voice: "assets/audio/1.mp3", 
                 next: "scene_school_walk"
             },
 
-            // ... (前段剧情省略) ...
             'scene_school_walk': {
                 speaker: "旁白",
                 text: "【走廊，人声嘈杂】你和习主席并排走在中南海附属中学的走廊上。突然，前方传来了沉重的脚步声。",
-                bg: "https://placehold.co/800x450/222/555?text=School+Corridor",
+                bg: "assets/images/school.jpg",
                 char: "", 
                 next: "scene_school_bullies"
             },
@@ -910,55 +931,69 @@
                 speaker: "普京 (班霸)",
                 text: "哟，这不是平子吗？今天的保护费准备好了吗？我的小弟金正恩说他饿了，想吃蛋炒饭。",
                 bg: "https://placehold.co/800x450/500/000?text=Putin+&+Kim",
+                voice: "assets/audio/putin.mp3", 
                 next: "scene_school_trump"
             },
             'scene_school_trump': {
                 speaker: "特朗普 (金毛情敌)",
                 text: "（一把拽住习的手腕，声音不高却带着狠劲）",
-                bg: "https://placehold.co/800x450/gold/000?text=Trump+Tower",
+                bg: "assets/images/frist01.png",
+                char: "", 
                 next: "scene_school_trump_2"
             },
             'scene_school_trump_2': {
                 speaker: "特朗普",
                 text: "Xi，又想躲我？再躲，我就把你所有出口货加到60%，让你哭都没地方哭。”",
-                bg: "https://placehold.co/800x450/gold/000?text=Trump+Tower",
+                voice: "assets/audio/tp1.mp3", 
+                bg: "assets/images/frist01.png",
+                char: "", 
                 next: "scene_school_trump_3"
             },
             'scene_school_trump_3': {
                 speaker: "习主席",
                 text: "（皱眉抽手，没抽开，声音很轻）：你放手...",
                 bg: "https://placehold.co/800x450/gold/000?text=Trump+Tower",
+                voice: "assets/audio/2.mp3", 
+                bg: "assets/images/frist01.png",
+                char: "", 
                 next: "scene_school_trump_4"
             },
             'scene_school_trump_4': {
                 speaker: "特朗普",
                 text: "（俯身，几乎贴到习主席耳边，笑得恶劣）",
-                bg: "https://placehold.co/800x450/gold/000?text=Trump+Tower",
+                bg: "assets/images/frist04.png",
+                char: "", 
                 next: "scene_school_trump_5"
             },
             'scene_school_trump_5': {
                 speaker: "特朗普",
                 text: "不放。除非你说一句‘我愿意跟你喝咖啡’",
-                bg: "https://placehold.co/800x450/gold/000?text=Trump+Tower",
+                voice: "assets/audio/tp2.mp3", 
+                bg: "assets/images/frist04.png",
+                char: "", 
                 next: "scene_school_trump_6"
             },
             'scene_school_trump_6': {
                 speaker: "习主席",
                 text: "（抬头，冷冷看他一眼）：做梦",
-                bg: "https://placehold.co/800x450/gold/000?text=Trump+Tower",
+                bg: "assets/images/frist01.png",
+                char: "", 
+                voice: "assets/audio/3.mp3", 
                 next: "scene_school_trump_7"
             },
             'scene_school_trump_7': {
                 speaker: "特朗普",
                 text: "（手指收紧，嗓音低哑）：那就试试看，是你的经济先崩溃，还是我先松手",
-                bg: "https://placehold.co/800x450/gold/000?text=Trump+Tower",
+                bg: "assets/images/frist01.png",
+                char: "", 
+                voice: "assets/audio/tp3.mp3", 
                 next: "scene_xi_scared"
             },
             'scene_xi_scared': {
                 speaker: "习主席 ",
                 text: "{name}...（看向你的眼神像是遇见了救命稻草）",
-                char: "assets/images/photo.png",
-                bg: "https://placehold.co/800x450/1a0b14/222?text=Zhongnanhai+Bedroom",
+                char: "assets/images/girl.png", 
+                bg: "assets/images/school.jpg",
                 shake: true,
                 next: "scene_school_choice"
             },
@@ -972,41 +1007,59 @@
             'scene_school_run_next': {
                 speaker: "特朗普 ",
                 text: "……（盯着你挡在习前面的身影，咬了下牙）",
+                bg: "assets/images/frist03.png",
+                char: "", 
                 next: "scene_school_hero_next2"
             },
             'scene_school_hero_next2': {
                 speaker: "特朗普 ",
                 text: "呵，有意思。（突然笑了，转身就走）{name}，这笔账我迟早跟你算。",
+                voice: "assets/audio/tp4.mp3", 
+                bg: "assets/images/frist03.png",
+                char: "", 
                 next: "scene_school_hero"
             },
             'scene_school_hero': {
                 speaker: "习主席 ",
                 text: "你... 你居然为了我... (脸红) 哼，多管闲事！不过... 谢谢。",
+                char: "assets/images/girl.png", 
+                bg: "assets/images/school.jpg",
+                voice: "assets/audio/4.mp3", 
                 next: "scene_night"
             },
             'scene_school_run': {
                 speaker: "{name} ",
                 text: "（一把拽住习的手）快走！",
+                bg: "assets/images/frist02.png",
+                char: "", 
                 next: "scene_school_run_2"
             },
             'scene_school_run_2': {
                 speaker: "特朗普 ",
                 text: "Xi！（声音突然拔高）我说到做到！！",
+                voice: "assets/audio/tp5.mp3", 
+                bg: "assets/images/frist02.png",
+                char: "", 
                 next: "scene_school_run_3"
             },
             'scene_school_run_3': {
                 speaker: "  ",
                 text: "（特朗普站在原地没追，耳根却红得发烫，拳头攥得死紧）",
+                bg: "assets/images/787878.png",
+                char: "",
                 next: "scene_school_run_4"
             },
             'scene_school_run_4': {
                 speaker: "习主席 ",
                 text: "呼... 呼... 跑得好快... 以后不许丢下我一个人！",
+                char: "assets/images/girl.png", 
+                bg: "assets/images/school.jpg",
+                voice: "assets/audio/5.mp3", 
                 next: "scene_night"
             },
             'scene_night': {
                 speaker: "旁白",
-                text: "（此处省略不可描述的内容，总之习主席对你的表现非常满意...）",
+                text: "（此处省略一些内容，总之习主席对你的表现非常满意...）",
                 bg: "https://placehold.co/800x450/000/000?text=CENSORED",
                 char: "",
                 next: "scene_morning_president"
@@ -1016,6 +1069,7 @@
                 text: "早安，{name}。既然你昨晚表现这么好，朕决定封你为‘一日国家主席’！今天你想做什么都可以哦~",
                 bg: "https://placehold.co/800x450/1a0b14/222?text=Morning+Bedroom",
                 char: "assets/images/photo.png",
+                voice: "assets/audio/6.mp3", 
                 next: "scene_president_menu"
             },
             'scene_president_menu': {
@@ -1063,16 +1117,25 @@
             'route_pres_security': {
                 speaker: "DickSick AI🤖",
                 text: "系统已上线。东三省居民电子脚镣已激活。dicksickAI连坐大数据系统接入中.......",
+                char: "assets/images/db.png", 
+                bg: "",
+                voice: "assets/audio/bot01.mp3", 
                 next: "route_pres_security_2"
             },
             'route_pres_security_2': {
                 speaker: "DickSick AI🤖",
                 text: "接入成功🖇️全国各省份东北狗电子脚镣已激活。每有一个东北人因犯罪被抓，全体东北人就会被脚镣电一下...",
+                char: "assets/images/db.png", 
+                bg: "",
+                voice: "assets/audio/bot02.mp3", 
                 next: "route_pres_security_3"
             },
             'route_pres_security_3': {
                 speaker: "DickSick AI🤖",
                 text: "滴 ~💡 检测到海南省份有一起东北籍居民偷窃芒果行为，开始对全体东北人进行电击...滋滋滋滋滋⚡⚡⚡",
+                char: "assets/images/db.png", 
+                bg: "",
+                voice: "assets/audio/bot03.mp3", 
                 next: "scene_takaichi_intro"
             },
             'route_pres_economy': {
@@ -1103,6 +1166,7 @@
                 speaker: "习主席 ",
                 text: "气死我了！一个个都针对我！那个女人... 竟敢说我是旧日支配者？！{name}，你说我该怎么办？",
                 char: "assets/images/photo.png",
+                voice: "assets/audio/7.mp3", 
                 bg: "https://placehold.co/800x450/1a0b14/222?text=Zhongnanhai+Bedroom",
                 shake: true,
                 next: "scene_takaichi_choice_main"
@@ -1121,6 +1185,7 @@
             'route_takaichi_hard': {
                 speaker: "习主席",
                 text: "好！说得对！我也早就看那群倭寇不爽了！传我命令，火箭军全体出动！",
+                voice: "assets/audio/8.mp3", 
                 next: "scene_takaichi_hard_war"
             },
             'scene_takaichi_hard_war': {
@@ -1164,7 +1229,7 @@
             // --- 隐藏支线：小偷阿晶 (指令3: 补充缺失的视频结局场景数据) ---
             'scene_ajing_1': {
                 speaker: "旁白",
-                text: "就在万念俱灰之时，你突然想起了在肠粉店里认识的小偷阿晶。他自述仅凭一张表情包就把敌方论坛永封，也是个淡泊名利的战术大师！（tip:这段很长,并且没有选项）",
+                text: "就在万念俱灰之时，你突然想起了在肠粉店里认识的小偷阿晶。他自述仅凭一张表情包就把敌方论坛永封，也是个淡泊名利的战术大师！",
                 bg: "https://placehold.co/800x450/000/333?text=Guangdong+Village",
                 char: "",
                 next: "scene_ajing_2"
@@ -1223,11 +1288,13 @@
             'scene_yinmen_array_3': {
                 speaker: "习主席",
                 text: "中华民族的败类.....死不足惜，美日韩台联军已逼近南海。尽快动手吧...",
+                voice: "assets/audio/9.mp3", 
                 next: "scene_yinmen_array_4"
             },
             'scene_yinmen_array_4': {
                 speaker: "小偷阿晶（发狂地狞笑）",
                 text: "《掰阴噬界门阵》就用女人的阴穴、怨气、秽潮，撕开现实，让漢族的真正母亲 -- 伟大阴母(人类的器官无法念出她的真实名字)！！！降临！！！就把整个太平洋舰队吞进子宫深渊，永世不得超生！",
+                bgm: "assets/audio/thesea001.mp3",
                 next: "scene_yinmen_array_5"
             },
 
@@ -1299,6 +1366,7 @@
                 bg: "",
                 char: "assets/images/tatakai.jpg",
                 shake: true,
+                voice: "assets/audio/10.mp3", 
                 next: "scene_yinmen_array_12"
             },
 
@@ -1306,6 +1374,7 @@
                 speaker: "",
                 text: "三亿女性同时高潮喷射（处女破膜的血+爱液+尿液+经血）形成百米高的“秽潮海啸”，覆盖了整个东海海面。",
                 char: "",
+                bgm: "stop",
                 next: "scene_yinmen_array_13"
             },
 
@@ -1313,6 +1382,7 @@
                 speaker: "美军少校",
                 text: "长官！！整个舰队雷达及电子设备集体失灵！是否集体撤退。中国大陆架就在前方",
                 char: "",
+                sfx: "assets/audio/thesea002.mp3", 
                 next: "scene_yinmen_array_14"
             },
 
@@ -1383,6 +1453,7 @@
                 speaker: "习近平",
                 text: "（愣神片刻）{name}，我要求的你都准备好了吗",
                 char: "",
+                voice: "assets/audio/11.mp3", 
                 next: "sscene_yinmen_array_24"
             },
 
@@ -1468,6 +1539,7 @@
                 text: "「你们曾经是我的一部分。」",
                 bg: "assets/images/45454.png",
                 char: "",
+                voice: "assets/audio/12.mp3", 
                 next: "sscene_ailunxigeer_array_33"
             },
 
@@ -1477,6 +1549,7 @@
                 text: "「你们背叛了血脉。」",
                 bg: "assets/images/45454.png",
                 char: "",
+                voice: "assets/audio/13.mp3", 
                 next: "sscene_ailunxigeer_array_34"
             },
 
@@ -1485,6 +1558,7 @@
                 text: "「现在，我要收回。」",
                 bg: "assets/images/45454.png",
                 char: "",
+                voice: "assets/audio/14.mp3", 
                 next: "sscene_ailunxigeer_array_35"
             },
 
@@ -1493,6 +1567,7 @@
                 text: "「从最近的高楼，头朝下，跳下去，不跳死全家」",
                 bg: "assets/images/45454.png",
                 char: "",
+                voice: "assets/audio/15.mp3", 
                 shake: true,
                 next: "sscene_ailunxigeer_array_36"
             },
@@ -1564,6 +1639,7 @@
             'scene_post_victory_bridge': {
                 speaker: "习主席",
                 text: "呵呵呵！汉族这一次真的崛起了...可是消耗了太多国运，我现在感觉身体被掏空...{name} 扶我回去休息。",
+                voice: "assets/audio/forget1.mp3", 
                 next: "scene_complaint_intro"
             },
 
@@ -1577,6 +1653,7 @@
             'scene_post_defeat_bridge': {
                 speaker: "习主席",
                 text: "奇耻大辱... 奇耻大辱啊！虽然丢了东北，但好在保住了皇位... 算了，回去工作吧。",
+                voice: "assets/audio/forget2.mp3", 
                 next: "scene_complaint_intro"
             },
 
@@ -1584,6 +1661,7 @@
             'route_takaichi_soft': {
                 speaker: "习主席",
                 text: "嗯... 打打杀杀确实不好，毕竟我们是礼仪之邦。那就派你去谈判吧。",
+                voice: "assets/audio/forget3.mp3", 
                 next: "scene_takaichi_soft_choice"
             },
             'scene_takaichi_soft_choice': {
@@ -1637,11 +1715,13 @@
                 speaker: "习主席 ",
                 text: "呼... 真是漫长的一天啊。当主席真的很累，{name}，你说对吧？",
                 char: "assets/images/photo.png",
+                voice: "assets/audio/16.mp3", 
                 next: "scene_complaint_1"
             },
             'scene_complaint_1': {
                 speaker: "习主席 ",
                 text: "唉... 工资只有8000块，每天还要被穷傻逼支那猪翻墙瞎骂，男人累",
+                voice: "assets/audio/17.mp3", 
                 next: "scene_yumenglong_start"
             },
 
@@ -1654,22 +1734,26 @@
             'scene_yumenglong_xi_reply': {
                 speaker: "习主席 ",
                 text: "不关包包的事哦！都是谣言！都是境外势力！",
+                voice: "assets/audio/18.mp3", 
                 shake: true,
                 next: "scene_yumenglong_complaint"
             },
             'scene_yumenglong_complaint': {
                 speaker: "习主席 ",
                 text: "最近有个叫「小偷阿晶」的烦人网友，经常因为这件事给我打骚扰电话，真是气死我了！",
+                voice: "assets/audio/19.mp3", 
                 next: "scene_yumenglong_complaint_2"
             },
             'scene_yumenglong_complaint_2': {
                 speaker: "习主席 ",
-                text: "气死我了！要是让我抓到他，我非得亲自！💢",
+                text: "气死我了！要是让我抓到他，我非得让他好看！💢",
+                voice: "assets/audio/20.mp3", 
                 next: "scene_yumenglong_slip"
             },
             'scene_yumenglong_slip': {
                 speaker: "习主席 ",
                 text: "再说了，我根本没有下令去害于朦胧... 我只是随口跟国安说了一句“让他消失”，谁知道他们... 呃！🙊",
+                voice: "assets/audio/21.mp3", 
                 shake: true,
                 next: "scene_yumenglong_choice"
             },
@@ -1683,6 +1767,7 @@
             'route_sycophant': {
                 speaker: "习主席 ",
                 text: "呼... 看来你很懂事嘛。误会解开了，那我们就来说点正事吧",
+                voice: "assets/audio/22.mp3", 
                 next: "scene_maid_reveal"
             },
             'route_rebel': {
@@ -1700,6 +1785,7 @@
             'scene_maid_reveal': {
                 speaker: "习主席 ",
                 text: "我将颁布「K签」引入国外优质男性来解决我日益增长的需求。",
+                voice: "assets/audio/23.mp3", 
                 next: "scene_choice_final"
             },
             'scene_choice_final': {
@@ -1713,14 +1799,16 @@
             'route_good': {
                 speaker: "习主席 ",
                 text: "诶？你... 你说真的吗？既然这样，那我就允许你加入「人类命运共同体」的伟大计划吧！",
+                voice: "assets/audio/24.mp3", 
                 next: "end_good"
             },
             // BE1
             'route_bad_xi': {
                 speaker: "习主席（讲话）",
-                text: "为了促进穷傻逼支猪生育，K签证宜早不宜迟，试行鲶鱼效.....呃！",
+                text: "我宣布！为了促进穷傻逼支猪生育，K签证宜早不宜迟，试行鲶鱼效.....呃！",
                 bg: "assets/images/use0001.jpg",
                 char: "",
+                voice: "assets/audio/25.mp3", 
                 shake: true,
                 next: "route_bad_xi_1"
             },
@@ -1745,6 +1833,7 @@
             'route_bad_xi_3': {
                 speaker: "习主席 ",
                 text: "{name}，你怎么把它带出...？不、不要按那个——呜哇！！！⚡⚡ う阔え地......终身难ふ....啊啊啊！",
+                voice: "assets/audio/26.mp3", 
                 shake: true,
                 next: "end_bad_xi"
             },
@@ -1767,36 +1856,85 @@
             if (data.next) loadScene(data.next);
         }
 
-        function loadScene(id) {
+function loadScene(id) {
             currentScene = id;
             let data = gameData[id];
             
-            // 指令1: 视频优先判断
+// --- 1. 动态剧情修正 ---
+            if (id === 'scene_yumenglong_complaint' && hasMetAjing) {
+                data = { 
+                    ...data, 
+                    // 这里修改文本
+                    text: "那个「小偷阿晶」虽然立了功，但也不能天天给我打骚扰电话吧，真是气死我了！",
+                    // ★★★ 在这里添加对应的语音文件路径 ★★★
+                    voice: "assets/audio/27.mp3" 
+                };
+            }
+
+            // --- 2. 视频结局处理 (保持不变) ---
             if (data.type === "video_ending") {
                 playEndingVideo(data.video, data.audio, data.next);
                 return;
             }
-            
-            // 指令5: 阿晶线触发点修正
-            if (id === 'scene_hard_unwilling_choice') { 
-                canTriggerAjingRoute = true; 
-                ajingClicks = 0;
-            } else { 
-                canTriggerAjingRoute = false; 
-            }
 
-            // 处理动态剧情 (伏笔回收)
-            if (id === 'scene_yumenglong_complaint' && hasMetAjing) {
-                data = {
-                    ...data, 
-                    text: "那个「小偷阿晶」虽然立了功，但还是天天给我打骚扰电话，真是气死我了！"
-                };
-            }
-            
-            // 真结局触发器
+            // --- 3. 特殊触发器逻辑 (保持不变) ---
+            if (id === 'scene_hard_unwilling_choice') { canTriggerAjingRoute = true; ajingClicks = 0; } 
+            else { canTriggerAjingRoute = false; }
             if (id === 'scene_choice_final') { canTriggerTrueEnd = true; watermarkClicks = 0; } 
             else { canTriggerTrueEnd = false; }
 
+            // =========================================
+            // ★★★ 新增：音频控制逻辑开始 ★★★
+            // =========================================
+
+            // A. 人物语音 (只播放一次，且点击下一句时自动打断上一句)
+            if (data.voice) {
+                if (currentVoice) { currentVoice.pause(); currentVoice = null; } // 打断上一句
+                currentVoice = new Audio(data.voice);
+                currentVoice.play().catch(e => console.log("Voice play error:", e));
+            }
+
+            // B. 场景音效 (只播放一次，不循环，跨场景不打断，适合爆炸声/惨叫声)
+            if (data.sfx) {
+                let sfx = new Audio(data.sfx);
+                sfx.loop = false;
+                sfx.play().catch(e => console.log("SFX play error:", e));
+            }
+
+            // C. 场景循环BGM (一直播放，直到遇到 stop 指令或新BGM)
+            if (data.bgm) {
+                // 如果指令是 "stop"，则停止当前BGM
+                if (data.bgm === "stop") {
+                    if (currentSceneBGM) {
+                        currentSceneBGM.pause();
+                        currentSceneBGM = null;
+                    }
+                    // 可选：恢复原来的网页播放器音乐
+                    if (isMusicPlaying) audioBGM.play();
+                } 
+                // 否则播放新的BGM
+                else {
+                    // 暂停网页原来的播放器音乐，避免重叠
+                    audioBGM.pause();
+
+                    // 如果当前已经在放这首，就不重置，让它继续播
+                    if (currentSceneBGM && currentSceneBGM.src.includes(data.bgm)) {
+                        // Do nothing, keep playing
+                    } else {
+                        // 否则切歌
+                        if (currentSceneBGM) currentSceneBGM.pause();
+                        currentSceneBGM = new Audio(data.bgm);
+                        currentSceneBGM.loop = true; // 强制循环
+                        currentSceneBGM.play().catch(e => console.log("Scene BGM error:", e));
+                    }
+                }
+            }
+            // =========================================
+            // ★★★ 新增逻辑结束 ★★★
+            // =========================================
+
+
+            // --- 4. 界面渲染逻辑 (保持不变) ---
             if (data.type === "choice") {
                 els.choices.innerHTML = ''; els.choices.style.display = 'flex';
                 els.box.style.display = 'none';
@@ -1810,16 +1948,11 @@
             }
 
             if (data.bg) els.bg.src = data.bg;
-            
             els.bg.style.display = 'block';
             els.box.style.display = 'block';
 
-            if (data.char) {
-                els.char.src = data.char; 
-                els.char.style.display = 'block'; 
-            } else {
-                if (data.char === "") els.char.style.display = 'none';
-            }
+            if (data.char) { els.char.src = data.char; els.char.style.display = 'block'; } 
+            else { if (data.char === "") els.char.style.display = 'none'; }
 
             if (data.shake) { els.char.classList.add('shake'); setTimeout(()=>els.char.classList.remove('shake'), 500); }
 
@@ -1829,10 +1962,17 @@
             function type() {
                 if (!isTyping) { els.text.innerHTML = content; return; }
                 if (i < content.length) {
-                    els.text.innerHTML += content.charAt(i);
+                    let char = content.charAt(i);
+                    if (char === '<') {
+                        let tagEnd = content.indexOf('>', i);
+                        if (tagEnd !== -1) {
+                            els.text.innerHTML += content.substring(i, tagEnd + 1);
+                            i = tagEnd + 1;
+                        } else { els.text.innerHTML += char; i++; }
+                    } else { els.text.innerHTML += char; i++; }
                     if (i % 3 === 0) AudioEngine.playTypeSound();
-                    i++; setTimeout(type, 30);
-                } else isTyping = false;
+                    setTimeout(type, 30);
+                } else { isTyping = false; }
             }
             type();
         }
