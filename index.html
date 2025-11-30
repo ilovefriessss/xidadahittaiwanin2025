@@ -62,7 +62,7 @@
             border-top: 1px dotted var(--neon-pink); padding-top: 4px; background: #111;
         }
 
-/* --- 启动引导页 (保留原有的) --- */
+        /* --- 启动引导页 --- */
         #start-screen-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #000; z-index: 10000; display: flex;
@@ -73,47 +73,24 @@
         #start-screen-overlay h1 { 
             font-size: 4rem; margin-bottom: 20px; text-shadow: 4px 4px 0 var(--cyan);
             animation: glitch 1s infinite;
-            /* 为了让图片和文字对齐更好，可以加这一行（可选） */
             display: flex; align-items: center; justify-content: center; gap: 10px;
         }
         .click-hint { animation: blink 1s infinite; color: #fff; font-size: 1.5rem; }
 
-        /* --- 新增：自定义标题 GIF 表情样式 --- */
+        /* --- 自定义标题 GIF 表情样式 --- */
         .custom-emoji {
-            /* [尺寸调整] */
-            width: 100px;   /* 根据你的gif大小调整 */
-            height: 80px;  
-            
-            /* [位置微调] */
-            vertical-align: middle;
-            transform: translateY(-5px); /* 负数向上，正数向下 */
-
-            /* [间距调整] */
-            margin: 0 15px; /* 图片离文字的距离 */
-            
-            /* [其他] */
-            display: inline-block;
-            border: none;
+            width: 100px; height: 80px;  
+            vertical-align: middle; transform: translateY(-5px);
+            margin: 0 15px; display: inline-block; border: none;
         }
-        /* --- 伪装系统弹窗 --- */
+
+        /* --- 伪装 Windows 系统弹窗 --- */
         #sys-cam-alert {
-            position: fixed; 
-            bottom: 20px;
-            right: -400px; /* 初始隐藏在屏幕右侧外面 */
-            width: 360px;
-            height: 100px;
-            background: #1f1f1f; /* Win10 暗色背景 */
-            color: #fff; 
-            box-shadow: 0 0 10px rgba(0,0,0,0.5);
-            z-index: 10001;
-            display: flex; 
-            align-items: center; 
-            padding: 0;
-            border-left: 4px solid #0078d7; /* Win10 蓝色装饰条 */
-            transition: right 0.5s cubic-bezier(0.25, 1, 0.5, 1); /* 滑出动画 */
-            font-family: 'Microsoft YaHei', sans-serif !important; /* 强制系统字体 */
-            cursor: default;
-            user-select: none;
+            position: fixed; bottom: 20px; right: -400px; width: 360px; height: 100px;
+            background: #1f1f1f; color: #fff; box-shadow: 0 0 10px rgba(0,0,0,0.5);
+            z-index: 10001; display: flex; align-items: center; padding: 0;
+            border-left: 4px solid #0078d7; transition: right 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+            font-family: 'Microsoft YaHei', sans-serif !important; cursor: default; user-select: none;
         }
         .sys-icon-area { width: 60px; height: 100%; display: flex; justify-content: center; align-items: center; }
         .sys-icon-img { font-size: 30px; }
@@ -143,24 +120,12 @@
             display: none; grid-template-columns: 280px 1fr; gap: 20px;
             position: relative; z-index: 10;
         }
+
         /* --- 手机端适配增强 --- */
         @media (max-width: 850px) { 
-            .container { 
-                grid-template-columns: 1fr; 
-            }
-            
-            /* 1. 增加手机上游戏画面的高度 */
-            .game-screen {
-                height: 550px !important; /* 原来是450px，改高一点 */
-            }
-
-            /* 2. 调整对话框，防止文字被切掉 */
-            .dialogue-box {
-                height: 140px !important; /* 对话框加高 */
-                bottom: 10px !important;
-                padding: 10px !important;
-                overflow-y: auto; /* 关键：如果文字实在太多，允许上下滚动查看！ */
-            }
+            .container { grid-template-columns: 1fr; }
+            .game-screen { height: 550px !important; }
+            .dialogue-box { height: 140px !important; bottom: 10px !important; padding: 10px !important; overflow-y: auto; }
         }
 
         /* 侧边栏 */
@@ -310,7 +275,7 @@
         }
         video { width: 100%; height: 100%; object-fit: cover; }
 
-        /* === 留言板终端样式 === */
+        /* === 留言板区域 (容器) === */
         .comment-section-wrapper {
             background-color: #000;
             border: 2px solid var(--win95-gray);
@@ -319,21 +284,48 @@
             position: relative;
             overflow: hidden;
         }
-        .comment-body {
-            padding: 20px;
-            background: rgba(250, 240, 250, 0.8);
-            background-image: linear-gradient(rgba(0, 255, 0, 0.03) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(0, 255, 0, 0.03) 1px, transparent 1px);
-            background-size: 20px 20px;
-            min-height: 300px;
-            border: 1px solid var(--cyan); /* 加个边框让它显眼点 */
+        
+        /* === 下面是被你贴到HTML身体里的CSS，现在归位到这里了 === */
+        .comment-body { 
+            padding: 20px; 
+            background: rgba(250, 240, 250, 0.8); 
+            min-height: 400px; /* 给个最小高度，确保有地方显示 */ 
+            border: 1px solid var(--cyan); 
+            position: relative; /* 关键：为了让遮罩层绝对定位 */ 
+        } 
+        
+        /* === 玻璃罩 (遮挡层) === */ 
+        #censorship-gate { 
+            /* 绝对定位：覆盖在 comment-body 上面 */ 
+            position: absolute; 
+            top: 0; left: 0; 
+            width: 100%; height: 100%; 
+            /* 视觉效果：半透明黑底 + 模糊滤镜 */ 
+            background: rgba(0, 0, 0, 0.6); 
+            backdrop-filter: blur(3px); 
+            /* 布局：让输入框居中显示 */ 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; /* 垂直居中 */ 
+            align-items: center; /* 水平居中 */ 
+            z-index: 50; /* 确保在评论区上面 */ 
+        } 
+        
+        /* 锁定时的输入框容器样式 */ 
+        .gate-content { 
+            background: #000; 
+            border: 2px solid var(--neon-pink); 
+            padding: 20px; 
+            text-align: center; 
+            box-shadow: 0 0 20px var(--neon-pink); 
+            max-width: 90%; 
+        } 
+        
+        /* === Giscus 容器 === */ 
+        #giscus-container { 
+            display: block; /* 默认改为显示 */ 
+            min-height: 200px; 
         }
-        #censorship-gate {
-            border: 2px dashed var(--neon-pink);
-            padding: 40px 20px; text-align: center;
-            background: rgba(20, 0, 20, 0.9); margin: 20px;
-        }
-        #giscus-container { margin-top: 20px; animation: fadeIn 1s ease-in; }
 
         /* 动画 */
         @keyframes glitch {
@@ -591,21 +583,23 @@
                 </div>
                 
                 <div class="comment-body">
-                    <!-- 状态 1: 审查门禁 -->
+                    <!-- 层1: 玻璃罩 (输入口令的地方) -->
                     <div id="censorship-gate">
-                        <h3 style="color:var(--neon-pink); text-align:center; margin-top:0;">⚠️ 思想审查 / CENSORSHIP ⚠️</h3>
-                        <p style="font-size:14px; color:#ccc;">根据《互联网相关法律法规》，留言前请进行自我审查。</p>
-                        <p style="font-size:14px; color:var(--cyan);">请输入通关密语</p>
-                        
-                        <div style="display:flex; gap:10px; justify-content:center; margin-top:15px;">
-                            <input type="text" id="censorship-input" placeholder="在此输入回答..." style="background:#000; border:1px solid #fff; color:#fff; padding:5px; font-family:inherit;">
-                            <button class="choice-btn" onclick="checkCensorship()" style="padding:5px 10px; font-size:12px;">提交审核</button>
+                        <div class="gate-content">
+                            <h3 style="color:var(--neon-pink); margin-top:0;">⚠️ 评论区已锁定 / LOCKED ⚠️</h3>
+                            <p style="font-size:14px; color:#ccc;">您可以浏览评论，但需通过政审才能发言。</p>
+                            <p style="font-size:14px; color:var(--cyan);">请输入通关密语</p>
+                            
+                            <div style="display:flex; gap:10px; justify-content:center; margin-top:15px;">
+                                <input type="text" id="censorship-input" placeholder="在此输入..." style="background:#333; border:1px solid #fff; color:#fff; padding:5px; font-family:inherit;">
+                                <button class="choice-btn" onclick="checkCensorship()" style="padding:5px 10px; font-size:12px; margin:0;">提交审核</button>
+                            </div>
+                            <p id="censorship-error" style="color:red; font-size:12px; display:none; margin-top:10px;">❌ 错误：口令错误！</p>
                         </div>
-                        <p id="censorship-error" style="color:red; font-size:12px; display:none; margin-top:10px;">❌ 错误：思想不纯！已被记录在案！</p>
                     </div>
 
-                    <!-- 状态 2: Giscus 评论区 -->
-                    <div id="giscus-container" style="display:none;">
+                    <!-- 层2: Giscus 评论区 (一直在下面，但被罩住了) -->
+                    <div id="giscus-container">
                         <!-- JS 会在这里注入评论框 -->
                     </div>
                 </div>
@@ -754,6 +748,9 @@
             
             updateRandomTip();
             setInterval(updateRandomTip, 8000); 
+
+            // ★★★ 新增这一行：一进网站就加载评论区 ★★★
+            loadGiscus(); 
         }
 
         /* --- 4. 水印与碰撞 --- */
@@ -855,6 +852,7 @@
             if (audioUrl) {
                 audioVideoTrack.src = audioUrl;
                 audioVideoTrack.currentTime = 0;
+                audioVideoTrack.loop = true; // 确保循环
                 audioVideoTrack.play().catch(e => console.log("Audio play prevented", e));
             } else {
                 audioVideoTrack.pause();
@@ -867,7 +865,7 @@
             els.video.load(); // 新增:强制重新加载视频
             els.video.style.display = 'block'; 
             els.video.style.zIndex = '1000';
-            els.skipBtn.style.display = 'none'; 
+            els.skipBtn.style.display = 'none';
 
             // 新增:监听视频结束事件
             els.video.onended = function() {
@@ -882,7 +880,9 @@
 
             // 5秒后显示跳过按钮
             setTimeout(() => {
-                els.skipBtn.style.display = 'block';
+                if (els.video.style.display === 'block') {
+                    els.skipBtn.style.display = 'block';
+                }
             }, 5000);
         }
 
@@ -929,7 +929,7 @@
             },
             'scene_school_bullies': {
                 speaker: "普京 (班霸)",
-                text: "哟，这不是平子吗？今天的保护费准备好了吗？我的小弟金正恩说他饿了，想吃蛋炒饭。",
+                text: "哟，这不是平子吗？今天的保护费（大撒币）准备好了吗？我的小弟金正恩说他饿了，想吃蛋炒饭。",
                 bg: "https://placehold.co/800x450/500/000?text=Putin+&+Kim",
                 voice: "assets/audio/putin.mp3", 
                 next: "scene_school_trump"
@@ -1229,7 +1229,7 @@
             // --- 隐藏支线：小偷阿晶 (指令3: 补充缺失的视频结局场景数据) ---
             'scene_ajing_1': {
                 speaker: "旁白",
-                text: "就在万念俱灰之时，你突然想起了在肠粉店里认识的小偷阿晶。他自述仅凭一张表情包就把敌方论坛永封，也是个淡泊名利的战术大师！",
+                text: "就在万念俱灰之时，你突然想起了在广东城中村遇到的那位传说中的「古德」大神——小偷阿晶。据说他精通各种「损招」和「阴招」，是网络上最神秘的战术大师。",
                 bg: "https://placehold.co/800x450/000/333?text=Guangdong+Village",
                 char: "",
                 next: "scene_ajing_2"
@@ -2100,18 +2100,20 @@ function triggerEnding(type) {
 
             if (input !== requiredPassphrase) {
                 AudioEngine.playClickSound();
-                errorMsg.innerText = "❌ 错误：口令不正确！全过程民主通过了吗？";
+                errorMsg.innerText = "❌ 错误：口令不正确！";
                 errorMsg.style.display = "block";
                 return;
             }
 
             AudioEngine.playTypeSound();
             document.getElementById('censorship-gate').style.display = 'none';
-            document.getElementById('giscus-container').style.display = 'block';
-            loadGiscus();
+
         }
 
         function loadGiscus() {
+            // 如果已经加载过了，就别加了
+            if (document.getElementById('giscus-container').innerHTML.trim() !== "") return;
+
             const script = document.createElement('script');
             script.src = "https://giscus.app/client.js";
             script.setAttribute("data-repo", giscusConfig.repo);
