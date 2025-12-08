@@ -647,10 +647,14 @@
 
         /* --- 1. 音乐播放器 PRO --- */
         const musicPlaylist = [
-            { url: 'assets/audio/backgroundmusic001.mp3', name: 'Track 1: Background' },
-            { url: 'assets/audio/backgroundmusic002.mp3', name: 'Track 2: Shi ji na no' },
-            { url: 'assets/audio/backgroundmusic003.mp3', name: 'Track 3: ShijinanoShijinano' },
-            { url: 'assets/audio/backgroundmusic004.mp3', name: 'Track 3: ssstttaaarrr' }
+            { url: 'assets/audio/backgroundmusic001.mp3', name: 'Track 1: 429 - ♡不安定ガール♡(p.aden)' },
+            { url: 'assets/audio/backgroundmusic002.mp3', name: 'Track 2: Dan Salvato - Doki Doki Literature Club!' },
+            { url: 'assets/audio/backgroundmusic003.mp3', name: 'Track 3: Shi ji na no' },
+            { url: 'assets/audio/backgroundmusic004.mp3', name: 'Track 4: ssstttaaarrr' },
+            { url: 'assets/audio/backgroundmusic005.mp3', name: 'Track 5: DECO27,初音ミク - モニタリング' },
+            { url: 'assets/audio/backgroundmusic006.mp3', name: 'Track 6: DECO27,初音ミク - 乙女解剖' },
+            { url: 'assets/audio/backgroundmusic007.mp3', name: 'Track 7: たかやん - 推しと結婚したくてしぬ！' },
+            { url: 'assets/audio/backgroundmusic008.mp3', name: 'Track 8: 香椎モイミ,音街ウナ - 初恋日記 feat.音街ウナ' }
         ];
         let currentTrackIndex = 0;
         let playMode = 'sequence'; 
@@ -1124,7 +1128,7 @@ function enterSite() {
             'route_pres_security': {
                 speaker: "DickSick AI🤖",
                 text: "系统已上线。东三省居民电子脚镣已激活。dicksickAI连坐大数据系统接入中.......",
-                char: "assets/images/db.png", 
+                char: "🤖", 
                 bg: "",
                 voice: "assets/audio/bot01.mp3", 
                 next: "route_pres_security_2"
@@ -1132,7 +1136,7 @@ function enterSite() {
             'route_pres_security_2': {
                 speaker: "DickSick AI🤖",
                 text: "接入成功🖇️全国各省份东北狗电子脚镣已激活。每有一个东北人因犯罪被抓，全体东北人就会被脚镣电一下...",
-                char: "assets/images/db.png", 
+                char: "🤖", 
                 bg: "",
                 voice: "assets/audio/bot02.mp3", 
                 next: "route_pres_security_3"
@@ -1140,7 +1144,7 @@ function enterSite() {
             'route_pres_security_3': {
                 speaker: "DickSick AI🤖",
                 text: "滴 ~💡 检测到海南省份有一起东北籍居民偷窃芒果行为，开始对全体东北人进行电击...滋滋滋滋滋⚡⚡⚡",
-                char: "assets/images/db.png", 
+                char: "🤖", 
                 bg: "",
                 voice: "assets/audio/bot03.mp3", 
                 next: "scene_takaichi_intro"
@@ -1228,7 +1232,7 @@ function enterSite() {
             'scene_hard_unwilling_choice': { 
                 type: "choice", 
                 options: [ 
-                    { label: "[不甘] 难道这就结束了吗?", target: "scene_hard_defeat_video" } 
+                    { label: "👈😣👆[不甘] 难道这就结束了吗?👇😣👉", target: "scene_hard_defeat_video" } 
                 ] 
             },
             // 指令4 修改部分结束
