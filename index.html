@@ -349,15 +349,27 @@
             40%, 60% { transform: translate3d(-48%, 0, 0); }
         }
 
-        /* === Xi-Tok 抖音风格样式 (修正版) === */
+        /* === Xi-Tok 样式优化版 === */
         .tiktok-container {
-            width: 100%;
-            height: 650px; /* 容器高度 */
+            width: 100%; /* 跟随父容器宽度 */
+    
+            /* 
+               高度设定很重要：
+               如果想要像手机一样竖长，可以设固定高度比如 600px。
+               如果想要随视频比例自适应，这在CSS里比较难，建议给个固定高度体验最好。
+            */
+            height: 600px; 
+    
             background: #000;
             overflow-y: scroll;
-            scroll-snap-type: y mandatory; /* 强制捕捉 */
+    
+            /* 核心：强制捕捉 */
+            scroll-snap-type: y mandatory; 
+    
             position: relative;
             border: 2px solid #fff;
+    
+            /* 隐藏滚动条 */
             scrollbar-width: none; 
             -ms-overflow-style: none;
         }
@@ -365,10 +377,11 @@
 
         .tiktok-item {
             width: 100%;
-            height: 100%;
-            scroll-snap-align: start;
+            height: 100%; /* 强制占满容器高度，配合 scroll-snap 实现一页一个 */
+            scroll-snap-align: start; /* 捕捉对齐 */
+            scroll-snap-stop: always; /* 【关键】强制停顿，防止一次划过好几个 */
             position: relative;
-            background: #000; /* 背景纯黑，适合横屏视频 */
+            background: #000;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -377,30 +390,22 @@
         .tiktok-item video {
             width: 100%;
             height: 100%;
-            /* 关键修改：contain 让视频完整显示不裁剪，cover 会铺满但裁剪 */
-            object-fit: contain; 
+            object-fit: contain; /* 保持比例，黑边填充 */
         }
 
-        /* 文字浮层 */
+        /* 浮层样式保持不变 */
         .tiktok-overlay {
             position: absolute;
-            bottom: 50px; /* 稍微抬高一点，给底部的进度条留位置 */
+            bottom: 50px;
             left: 10px;
             right: 10px;
             text-align: left;
             color: #fff;
             text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
-            pointer-events: none; /* 关键：让点击穿透，不影响你拖动进度条 */
+            pointer-events: none;
             z-index: 10;
         }
-
-
-        .tt-desc {
-            font-size: 14px;
-            margin: 0;
-            line-height: 1.4;
-            opacity: 0.9;
-        }
+        .tt-desc { font-size: 14px; margin: 0; opacity: 0.9; }
 
     </style>
 </head>
@@ -602,222 +607,17 @@
                 </div>
             </div>
 
-<!-- === Xi-Tok 抖音模式视频流 === -->
-            <div class="video-post" style="max-width: 400px; margin: 0 auto;">
-                <!-- 如果你还想要那个 win95 风格的顶栏就保留，不想要可以删掉下面这行 div -->
+<!-- === Xi-Tok 抖音模式视频流 (动态加载版) === -->
+<!-- 去掉了 max-width 限制，现在它会自动填满父容器，和游戏/评论区一样宽 -->
+            <div class="video-post" style="width: 100%; margin-bottom: 30px;">
                 <div class="win95-header">
-                    <span>XI_TOK.exe</span>
+                    <span>XI_TOK_INFINITE.exe</span>
                     <div style="display:flex; gap:2px;"><div style="width:10px; height:10px; background:#ccc;">x</div></div>
                 </div>
     
-                <div class="tiktok-container">
-        
-                    <!-- 视频 1 (竖屏) -->
-                    <div class="tiktok-item">
-                        <video controls loop playsinline webkit-playsinline>
-                            <source src="assets/videos/video001.mp4" type="video/mp4">
-                        </video>
-                        <div class="tiktok-overlay">
-                            <p class="tt-desc"> </p>
-                        </div>
-                    </div>
-
-                    <!-- 视频 2 (横屏) -->
-                    <div class="tiktok-item">
-                        <video controls loop playsinline webkit-playsinline>
-                            <source src="assets/videos/video002.mp4" type="video/mp4">
-                        </video>
-                        <div class="tiktok-overlay">
-                            <p class="tt-desc">世界上还是好包包多</p>
-                        </div>
-                    </div>
- 
-                    <div class="tiktok-item">
-                        <video controls loop playsinline webkit-playsinline>
-                            <source src="assets/videos/xi (1).MOV" type="video/mp4">
-                        </video>
-                        <div class="tiktok-overlay">
-                            <p class="tt-desc">galgame恋与梁家河预告 2103年6月15日习主席150岁大寿全球发售</p>
-                        </div>
-                    </div>
- 
-                    <div class="tiktok-item">
-                        <video controls loop playsinline webkit-playsinline>
-                            <source src="assets/videos/xi (1).mp4" type="video/mp4">
-                        </video>
-                        <div class="tiktok-overlay">
-                            <p class="tt-desc"> </p>
-                        </div>
-                    </div>
- 
-                    <div class="tiktok-item">
-                        <video controls loop playsinline webkit-playsinline>
-                            <source src="assets/videos/xi (2).MOV" type="video/mp4">
-                        </video>
-                        <div class="tiktok-overlay">
-                            <p class="tt-desc">富平小黑猫喵啊喵</p>
-                        </div>
-                    </div>
- 
-                    <div class="tiktok-item">
-                        <video controls loop playsinline webkit-playsinline>
-                            <source src="assets/videos/xi (2).mp4" type="video/mp4">
-                        </video>
-                        <div class="tiktok-overlay">
-                            <p class="tt-desc"> </p>
-                        </div>
-                    </div>
- 
-                    <div class="tiktok-item">
-                        <video controls loop playsinline webkit-playsinline>
-                            <source src="assets/videos/xi (3).MOV" type="video/mp4">
-                        </video>
-                        <div class="tiktok-overlay">
-                            <p class="tt-desc">我的相册堆满你的照片</p>
-                        </div>
-                    </div>
- 
-                    <div class="tiktok-item">
-                        <video controls loop playsinline webkit-playsinline>
-                            <source src="assets/videos/xi (3).mp4" type="video/mp4">
-                        </video>
-                        <div class="tiktok-overlay">
-                            <p class="tt-desc">习近平望着窗外。
-阳光正明媚，透过小小的窗口，挥洒进来。
-恍惚间，习近平仿佛看到阳光中，出现了一个人影。
-那个人影，不是他的父亲或者母亲，也不是他生命中曾经热爱的某个女人，而是他自己。
-那个年轻的自己，
-那个笑起来宛如阳光般澄澈的少年。</p>
-                        </div>
-                    </div>
-
-                    <div class="tiktok-item">
-                        <video controls loop playsinline webkit-playsinline>
-                            <source src="assets/videos/xi (4).mp4" type="video/mp4">
-                        </video>
-                        <div class="tiktok-overlay">
-                            <p class="tt-desc">他们都是谁</p>
-                        </div>
-                    </div>
- 
-                    <div class="tiktok-item">
-                        <video controls loop playsinline webkit-playsinline>
-                            <source src="assets/videos/xi (5).mp4" type="video/mp4">
-                        </video>
-                        <div class="tiktok-overlay">
-                            <p class="tt-desc">23333333😂😂😂</p>
-                        </div>
-                    </div>
- 
-                    <div class="tiktok-item">
-                        <video controls loop playsinline webkit-playsinline>
-                            <source src="assets/videos/xi (6).mp4" type="video/mp4">
-                        </video>
-                        <div class="tiktok-overlay">
-                            <p class="tt-desc">🥰🥰🥰</p>
-                        </div>
-                    </div>
- 
-                    <div class="tiktok-item">
-                        <video controls loop playsinline webkit-playsinline>
-                            <source src="assets/videos/xi (7).mp4" type="video/mp4">
-                        </video>
-                        <div class="tiktok-overlay">
-                            <p class="tt-desc">🤗🤗🤗</p>
-                        </div>
-                    </div>
- 
-                    <div class="tiktok-item">
-                        <video controls loop playsinline webkit-playsinline>
-                            <source src="assets/videos/xi (8).mp4" type="video/mp4">
-                        </video>
-                        <div class="tiktok-overlay">
-                            <p class="tt-desc">💑</p>
-                        </div>
-                    </div>
- 
-                    <div class="tiktok-item">
-                        <video controls loop playsinline webkit-playsinline>
-                            <source src="assets/videos/xi (9).mp4" type="video/mp4">
-                        </video>
-                        <div class="tiktok-overlay">
-                            <p class="tt-desc">经典回顾之小笨嘴</p>
-                        </div>
-                    </div>
- 
-                    <div class="tiktok-item">
-                        <video controls loop playsinline webkit-playsinline>
-                            <source src="assets/videos/xi (10).mp4" type="video/mp4">
-                        </video>
-                        <div class="tiktok-overlay">
-                            <p class="tt-desc">苍天弃我，我宁成魔！</p>
-                        </div>
-                    </div>
- 
-                    <div class="tiktok-item">
-                        <video controls loop playsinline webkit-playsinline>
-                            <source src="assets/videos/xi (11).mp4" type="video/mp4">
-                        </video>
-                        <div class="tiktok-overlay">
-                            <p class="tt-desc">谁来了？</p>
-                        </div>
-                    </div>
- 
-                    <div class="tiktok-item">
-                        <video controls loop playsinline webkit-playsinline>
-                            <source src="assets/videos/xi (13).mp4" type="video/mp4">
-                        </video>
-                        <div class="tiktok-overlay">
-                            <p class="tt-desc">咕噜咕噜咕噜....</p>
-                        </div>
-                    </div>
- 
-                    <div class="tiktok-item">
-                        <video controls loop playsinline webkit-playsinline>
-                            <source src="assets/videos/xi (14).mp4" type="video/mp4">
-                        </video>
-                        <div class="tiktok-overlay">
-                            <p class="tt-desc">走了~</p>
-                        </div>
-                    </div>
-
-                    <div class="tiktok-item">
-                        <video controls loop playsinline webkit-playsinline>
-                            <source src="assets/videos/xi (15).mp4" type="video/mp4">
-                        </video>
-                        <div class="tiktok-overlay">
-                            <p class="tt-desc">翻墙穷傻逼反贼支那猪怕了没 </p>
-                        </div>
-                    </div>
- 
-                    <div class="tiktok-item">
-                        <video controls loop playsinline webkit-playsinline>
-                            <source src="assets/videos/xi (16).mp4" type="video/mp4">
-                        </video>
-                        <div class="tiktok-overlay">
-                            <p class="tt-desc">哈哈 我看见你了...</p>
-                        </div>
-                    </div>
- 
-                    <div class="tiktok-item">
-                        <video controls loop playsinline webkit-playsinline>
-                            <source src="assets/videos/xi (17).mp4" type="video/mp4">
-                        </video>
-                        <div class="tiktok-overlay">
-                            <p class="tt-desc">有点帅</p>
-                        </div>
-                    </div>
- 
-                    <div class="tiktok-item">
-                        <video controls loop playsinline webkit-playsinline>
-                            <source src="assets/videos/xi (18).mp4" type="video/mp4">
-                        </video>
-                        <div class="tiktok-overlay">
-                            <p class="tt-desc">想给这两个侮辱习总的倭女栓起来，叫上十几个解放军光着膀子在习主席画像面前轮奸内射，身上画满汉族母狗、中国人专属精液盆等涂鸦，睡觉拉屎都要带上眼罩口球房间用大喇叭播放习近平新时代中国特色社会主义思想</p>
-                        </div>
-                    </div>
-  
-
+                <!-- 这是一个空容器，JS 会自动往里面塞视频 -->
+                <div class="tiktok-container" id="tiktok-feed">
+                    <!-- JS 将在这里生成内容 -->
                 </div>
             </div>
 
@@ -2375,32 +2175,125 @@ function checkCensorship() {
             document.getElementById('giscus-container').appendChild(script);
         }
 
-/* --- Xi-Tok 逻辑引擎 (精简版) --- */
+/* --- Xi-Tok 智能引擎 (伪随机 + 无限流 + 懒加载) --- */
 document.addEventListener('DOMContentLoaded', () => {
-    // 监听滚动：划走暂停，划入播放
+    
+    // 1. 视频数据库 (请在这里把你的所有视频都填进去)
+    const videoSourceList = [
+        { src: "assets/videos/video001.mp4", desc: " " },
+        { src: "assets/videos/video002.mp4", desc: "世界上还是好包包多" },
+        { src: "assets/videos/xi_1.MOV", desc: "galgame恋与梁家河预告 2103年6月15日习主席150岁大寿全球发售" },
+        { src: "assets/videos/xi_1.mp4", desc: " " },
+        { src: "assets/videos/xi_2.MOV", desc: "富平小黑猫喵啊喵" },
+        { src: "assets/videos/xi_2.mp4", desc: " " },
+        { src: "assets/videos/xi_3.MOV", desc: "我的相册堆满你的照片" },
+        { src: "assets/videos/xi_3.mp4", desc: `习近平望着窗外。<br>阳光正明媚，透过小小的窗口，挥洒进来。<br>恍惚间，习近平仿佛看到阳光中，出现了一个人影。<br>那个人影，不是他的父亲或者母亲，也不是他生命中曾经热爱的某个女人，而是他自己。<br>那个年轻的自己，<br>那个笑起来宛如阳光般澄澈的少年。` },
+        { src: "assets/videos/xi_4.mp4", desc: "WAZZUP BEIJING" },
+        { src: "assets/videos/xi_5.mp4", desc: "23333333😂😂😂" },
+        { src: "assets/videos/xi_6.mp4", desc: "🥰🥰🥰" },
+        { src: "assets/videos/xi_7.mp4", desc: "🤗🤗🤗" },
+        { src: "assets/videos/xi_8.mp4", desc: "💑" },
+        { src: "assets/videos/xi_9.mp4", desc: "经典回顾之小笨嘴" },
+        { src: "assets/videos/xi_10.mp4", desc: "苍天弃我，我宁成魔！" },
+        { src: "assets/videos/xi_11.mp4", desc: "谁来了？" },
+        { src: "assets/videos/xi_13.mp4", desc: "咕噜咕噜咕噜...." },
+        { src: "assets/videos/xi_14.mp4", desc: "走了~" },
+        { src: "assets/videos/xi_15.mp4", desc: "翻墙反习穷傻逼支那猪怕了没" },
+        { src: "assets/videos/xi_16.mp4", desc: "哈哈 我看见你了" },
+        { src: "assets/videos/xi22.mp4", desc: " ` 可怜你李克强,有眼无珠 ` " },
+        { src: "assets/videos/xi21.mp4", desc: "微笑 帅哥哥" },
+        { src: "assets/videos/xi20.mp4", desc: "幽魂魔尊和乐土仙尊" },
+    ];
+
+    const feedContainer = document.getElementById('tiktok-feed');
+    let currentQueue = []; // 当前待播放列表
+
+    // 2. 洗牌算法 (Fisher-Yates Shuffle) - 实现伪随机
+    function shuffleArray(array) {
+        let arr = JSON.parse(JSON.stringify(array)); // 深拷贝，不影响原数组
+        for (let i = arr.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
+    }
+
+    // 3. 视频节点生成器 (核心：只给src赋值为空，实现懒加载)
+    function createVideoElement(videoData) {
+        const div = document.createElement('div');
+        div.className = 'tiktok-item';
+        div.innerHTML = `
+            <video controls loop playsinline webkit-playsinline preload="none" data-src="${videoData.src}"></video>
+            <div class="tiktok-overlay">
+                <h3 class="tt-title">${videoData.user}</h3>
+                <p class="tt-desc">${videoData.desc}</p>
+            </div>
+        `;
+        return div;
+    }
+
+    // 4. 追加视频到页面 (无限流逻辑)
+    function appendNextBatch() {
+        // 如果当前队列空了，就重新洗牌整个库，加入队列
+        if (currentQueue.length === 0) {
+            currentQueue = shuffleArray(videoSourceList);
+            console.log("播放列表已重置并洗牌:", currentQueue);
+        }
+
+        // 每次取出一个视频渲染
+        const videoData = currentQueue.shift(); 
+        const el = createVideoElement(videoData);
+        feedContainer.appendChild(el);
+        
+        // 绑定观察者
+        observer.observe(el);
+    }
+
+    // 5. 观察者：负责 懒加载 + 自动播放 + 无限加载
     let observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
-            const video = entry.target.querySelector('video');
+            const item = entry.target;
+            const video = item.querySelector('video');
             
             if (entry.isIntersecting) {
-                // 进入屏幕：尝试自动播放
-                // 进度条不归零，从上次停止的地方继续看体验更好，想重看可以手动拉进度条
-                video.play().catch(e => {
-                    console.log("浏览器限制自动播放，需要用户手动点击", e);
-                });
+                // === 进入屏幕 ===
+                
+                // A. 懒加载策略：如果是第一次播放，把 data-src 赋值给 src
+                if (!video.src && video.dataset.src) {
+                    video.src = video.dataset.src;
+                    video.load(); // 加载视频
+                }
+
+                // B. 尝试播放
+                video.play().catch(e => console.log("等待用户交互以播放"));
+
+                // C. 无限流策略：如果这是倒数第2个视频，提前加载新的视频追加到屁股后面
+                if (item.nextElementSibling === null) {
+                    appendNextBatch(); // 追加1个
+                    appendNextBatch(); // 再追加1个，保持缓冲
+                }
+
             } else {
-                // 离开屏幕：自动暂停
+                // === 离开屏幕 ===
                 video.pause();
+                // 优化内存：如果视频已经划走很远，可以考虑把 src 清空 (这里暂不加，防止回看卡顿)
             }
         });
     }, {
-        threshold: 0.6 // 视频在屏幕里显示超过 60% 才触发
+        threshold: 0.6 // 露出 60% 视为进入
     });
 
-    // 绑定观察者
-    document.querySelectorAll('.tiktok-item').forEach(item => {
-        observer.observe(item);
-    });
+    // --- 初始化 ---
+    // 起步先加载前3个视频，保证体验
+    appendNextBatch();
+    appendNextBatch();
+    appendNextBatch();
+
+    // 手动触发第一个视频的加载（因为有时候 Observer 初始化慢）
+    const firstVideo = feedContainer.querySelector('video');
+    if(firstVideo && firstVideo.dataset.src) {
+        firstVideo.src = firstVideo.dataset.src;
+    }
 });
 
     </script>
