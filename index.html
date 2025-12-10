@@ -2175,10 +2175,29 @@ function checkCensorship() {
             document.getElementById('giscus-container').appendChild(script);
         }
 
-/* --- Xi-Tok 智能引擎 (伪随机 + 无限流 + 懒加载) --- */
+/* --- Xi-Tok 智能引擎 (CDN加速 + 智能预加载 + 纯净版) --- */
 document.addEventListener('DOMContentLoaded', () => {
     
-    // 1. 视频数据库 (请在这里把你的所有视频都填进去)
+    // ================= 配置区域 =================
+    
+    // 🔴 请务必修改这里！改成你的 GitHub 用户名和仓库名
+    const GITHUB_USER = "ilovefriessss"; 
+    const GITHUB_REPO = "xidadahittaiwanin2025";
+    const BRANCH = "main"; // 通常是 main 或 master
+
+    // 开关：是否启用 CDN 加速？(本地调试时设为 false，上传 GitHub 后设为 true)
+    // 建议：上传前改为 true，速度会快非常多！
+    const USE_CDN = false; 
+
+    // 工具：生成视频链接
+    function getVideoUrl(path) {
+        if (!USE_CDN) return path;
+        // 移除 path 开头的 ./ 或 /
+        const cleanPath = path.replace(/^\.?\//, '');
+        return `https://cdn.jsdelivr.net/gh/${GITHUB_USER}/${GITHUB_REPO}@${BRANCH}/${cleanPath}`;
+    }
+
+    // 1. 视频数据库 (已移除 user 字段，文件名建议全部改为 mp4)
     const videoSourceList = [
         { src: "assets/videos/video001.mp4", desc: " " },
         { src: "assets/videos/video002.mp4", desc: "世界上还是好包包多" },
@@ -2206,11 +2225,11 @@ document.addEventListener('DOMContentLoaded', () => {
     ];
 
     const feedContainer = document.getElementById('tiktok-feed');
-    let currentQueue = []; // 当前待播放列表
+    let currentQueue = []; 
 
-    // 2. 洗牌算法 (Fisher-Yates Shuffle) - 实现伪随机
+    // 2. 洗牌算法
     function shuffleArray(array) {
-        let arr = JSON.parse(JSON.stringify(array)); // 深拷贝，不影响原数组
+        let arr = JSON.parse(JSON.stringify(array));
         for (let i = arr.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [arr[i], arr[j]] = [arr[j], arr[i]];
@@ -2218,38 +2237,51 @@ document.addEventListener('DOMContentLoaded', () => {
         return arr;
     }
 
-    // 3. 视频节点生成器 (核心：只给src赋值为空，实现懒加载)
+    // 3. 视频节点生成器 (已移除 user 部分)
     function createVideoElement(videoData) {
         const div = document.createElement('div');
         div.className = 'tiktok-item';
+        
+        // 使用 getVideoUrl 处理 CDN 链接
+        const finalUrl = getVideoUrl(videoData.src);
+
+        // 注意：preload="metadata" 比 none 好，它会加载时长和首帧，但不下载整个文件
+        // data-src 依然保留用于懒加载逻辑
         div.innerHTML = `
-            <video controls loop playsinline webkit-playsinline preload="none" data-src="${videoData.src}"></video>
+            <video controls loop playsinline webkit-playsinline preload="none" data-src="${finalUrl}"></video>
             <div class="tiktok-overlay">
-                <h3 class="tt-title">${videoData.user}</h3>
                 <p class="tt-desc">${videoData.desc}</p>
             </div>
         `;
         return div;
     }
 
-    // 4. 追加视频到页面 (无限流逻辑)
+    // 4. 核心：预加载下一个视频 (解决卡顿的关键)
+    function preloadNextVideo(currentItem) {
+        const nextItem = currentItem.nextElementSibling;
+        if (nextItem) {
+            const nextVideo = nextItem.querySelector('video');
+            // 如果下一个视频还没加载，现在就开始加载
+            if (!nextVideo.src && nextVideo.dataset.src) {
+                console.log("🚀 偷偷预加载下一个视频...");
+                nextVideo.src = nextVideo.dataset.src;
+                nextVideo.preload = "auto"; // 强制开始缓冲
+            }
+        }
+    }
+
+    // 5. 追加视频逻辑
     function appendNextBatch() {
-        // 如果当前队列空了，就重新洗牌整个库，加入队列
         if (currentQueue.length === 0) {
             currentQueue = shuffleArray(videoSourceList);
-            console.log("播放列表已重置并洗牌:", currentQueue);
         }
-
-        // 每次取出一个视频渲染
         const videoData = currentQueue.shift(); 
         const el = createVideoElement(videoData);
         feedContainer.appendChild(el);
-        
-        // 绑定观察者
         observer.observe(el);
     }
 
-    // 5. 观察者：负责 懒加载 + 自动播放 + 无限加载
+    // 6. 观察者逻辑 (集成预加载)
     let observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             const item = entry.target;
@@ -2258,41 +2290,50 @@ document.addEventListener('DOMContentLoaded', () => {
             if (entry.isIntersecting) {
                 // === 进入屏幕 ===
                 
-                // A. 懒加载策略：如果是第一次播放，把 data-src 赋值给 src
+                // 1. 加载并播放当前视频
                 if (!video.src && video.dataset.src) {
                     video.src = video.dataset.src;
-                    video.load(); // 加载视频
+                }
+                
+                const playPromise = video.play();
+                if (playPromise !== undefined) {
+                    playPromise.catch(e => {
+                        console.log("等待交互以播放");
+                    });
                 }
 
-                // B. 尝试播放
-                video.play().catch(e => console.log("等待用户交互以播放"));
+                // 2. 【关键】预加载下一个视频
+                preloadNextVideo(item);
 
-                // C. 无限流策略：如果这是倒数第2个视频，提前加载新的视频追加到屁股后面
+                // 3. 无限流追加
                 if (item.nextElementSibling === null) {
-                    appendNextBatch(); // 追加1个
-                    appendNextBatch(); // 再追加1个，保持缓冲
+                    appendNextBatch();
+                    appendNextBatch(); // 多追加一个作为缓冲
                 }
 
             } else {
                 // === 离开屏幕 ===
                 video.pause();
-                // 优化内存：如果视频已经划走很远，可以考虑把 src 清空 (这里暂不加，防止回看卡顿)
+                // 不建议清空 src，否则滑回来又要重新缓冲，会很卡
             }
         });
     }, {
-        threshold: 0.6 // 露出 60% 视为进入
+        threshold: 0.6 
     });
 
     // --- 初始化 ---
-    // 起步先加载前3个视频，保证体验
     appendNextBatch();
     appendNextBatch();
     appendNextBatch();
 
-    // 手动触发第一个视频的加载（因为有时候 Observer 初始化慢）
-    const firstVideo = feedContainer.querySelector('video');
-    if(firstVideo && firstVideo.dataset.src) {
-        firstVideo.src = firstVideo.dataset.src;
+    // 立即激活第一个视频，不需要等观察者
+    const firstItem = feedContainer.querySelector('.tiktok-item');
+    if (firstItem) {
+        const v = firstItem.querySelector('video');
+        v.src = v.dataset.src;
+        v.preload = "auto"; // 第一个视频全力加载
+        // 尝试预加载第二个
+        preloadNextVideo(firstItem);
     }
 });
 
