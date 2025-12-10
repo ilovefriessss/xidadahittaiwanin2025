@@ -407,6 +407,121 @@
         }
         .tt-desc { font-size: 14px; margin: 0; opacity: 0.9; }
 
+/* =========================================
+   🎵 音乐播放器 UI - 内嵌流光版 (Inside Glow)
+   ========================================= */
+
+#music-player-ui {
+    /* --- 1. 定位与布局 --- */
+    position: fixed !important;
+    top: 20px;
+    right: 20px;
+    z-index: 9995;
+    
+    width: 220px;
+    padding: 15px; /* 内容内边距 */
+    
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    
+    /* --- 2. 核心：裁剪溢出 --- */
+    overflow: hidden; /* 关键！把溢出的光切掉 */
+    border-radius: 10px; /* 整体圆角 */
+    
+    /* 初始状态背景（暂停时显示） */
+    background: #0a000f; 
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+    
+    /* 字体颜色 */
+    color: var(--cyan);
+    user-select: none;
+}
+
+/* --- 3. 旋转的光盘 (只在播放时出现) --- */
+#music-player-ui.playing-beat::before {
+    content: '';
+    position: absolute;
+    /* 居中定位 */
+    top: 50%;
+    left: 50%;
+    /* 放大到宽度的2倍，确保旋转时能覆盖四角 */
+    width: 200%; 
+    height: 200%; 
+    
+    /* 赛博配色流光 */
+    background: conic-gradient(
+        transparent, 
+        var(--neon-pink), 
+        transparent 30%
+    );
+    
+    /* 旋转动画：中心点旋转 */
+    transform: translate(-50%, -50%); 
+    animation: rotate-inside 4s linear infinite;
+    
+    z-index: -2; /* 放在最底层 */
+}
+
+/* --- 4. 内部遮罩层 (用来挡住中间，形成边框效果) --- */
+/* 注意：这个必须一直存在，用来承载黑色背景 */
+#music-player-ui::after {
+    content: '';
+    position: absolute;
+    z-index: -1; /* 放在光盘上面，文字下面 */
+    
+    /* 核心：inset 决定边框粗细 */
+    /* 比如这里设为 3px，那么流光边框就是 3px 宽 */
+    inset: 3px; 
+    
+    background: #0a000f; /* 必须和网页背景一致或深色 */
+    border-radius: 8px; /* 比父元素稍微小一点 */
+}
+
+/* --- 5. 动画定义 --- */
+@keyframes rotate-inside {
+    0% { transform: translate(-50%, -50%) rotate(0deg); }
+    100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* --- 6. 播放时的微动效 (可选) --- */
+#music-player-ui.playing-beat {
+    /* 微微发光，增加氛围感，但不溢出 */
+    box-shadow: 0 0 15px rgba(0, 243, 255, 0.2); 
+}
+
+/* --- 7. 内部控件样式 (保持不变) --- */
+.player-controls { 
+    display: flex; 
+    gap: 15px; 
+    align-items: center; 
+    margin-bottom: 8px; 
+    width: 100%; 
+    justify-content: center;
+    position: relative; /* 提升层级，防止被遮挡 */
+    z-index: 10;
+}
+
+.player-btn { 
+    cursor: pointer; 
+    font-size: 24px; 
+    transition: 0.2s; 
+    text-shadow: 0 0 5px var(--cyan);
+}
+.player-btn:active { transform: scale(0.9); color: #fff; }
+
+.track-info { 
+    font-size: 14px; 
+    width: 100%; 
+    overflow: hidden; 
+    white-space: nowrap; 
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    padding-top: 4px; 
+    text-shadow: 0 0 2px var(--neon-pink);
+    position: relative; /* 提升层级 */
+    z-index: 10;
+}
+
     </style>
 </head>
 <body>
@@ -697,6 +812,22 @@
             audioBGM.volume = 0.5;
             updateTrackInfo();
             
+            // 监听：播放时开启特效
+            audioBGM.addEventListener('play', () => {
+                isMusicPlaying = true;
+                document.getElementById('btn-play-pause').innerHTML = "⏸";
+                // 【关键】添加节奏特效 class
+                document.getElementById('music-player-ui').classList.add('playing-beat');
+            });
+
+            // 监听：暂停或结束时关闭特效
+            audioBGM.addEventListener('pause', () => {
+                isMusicPlaying = false;
+                document.getElementById('btn-play-pause').innerHTML = "⏯";
+                // 【关键】移除节奏特效 class
+                document.getElementById('music-player-ui').classList.remove('playing-beat');
+            });
+
             audioBGM.addEventListener('ended', () => {
                 if (playMode === 'sequence') { playNextTrack(); } 
                 else { audioBGM.currentTime = 0; audioBGM.play(); }
@@ -705,17 +836,12 @@
 
         function toggleMusic() {
             if (audioBGM.paused) {
-                audioBGM.play().then(() => {
-                    isMusicPlaying = true;
-                    document.getElementById('btn-play-pause').innerHTML = "⏸";
-                }).catch(e => console.log("Play failed", e));
+                // 尝试播放（特效会在上面的 'play' 事件中自动触发）
+                audioBGM.play().catch(e => console.log("Play failed", e));
             } else {
                 audioBGM.pause();
-                isMusicPlaying = false;
-                document.getElementById('btn-play-pause').innerHTML = "⏯";
             }
         }
-
         function playNextTrack() {
             currentTrackIndex = (currentTrackIndex + 1) % musicPlaylist.length;
             audioBGM.src = musicPlaylist[currentTrackIndex].url;
@@ -2178,21 +2304,26 @@ function checkCensorship() {
 /* --- Xi-Tok 智能引擎 (CDN加速 + 智能预加载 + 纯净版) --- */
 document.addEventListener('DOMContentLoaded', () => {
     
-    // ================= 配置区域 =================
-    
-    // 🔴 请务必修改这里！改成你的 GitHub 用户名和仓库名
+// ================= 配置区域 =================
     const GITHUB_USER = "ilovefriessss"; 
     const GITHUB_REPO = "xidadahittaiwanin2025";
-    const BRANCH = "main"; // 通常是 main 或 master
+    const BRANCH = "main"; // ⚠️请确认GitHub上是 main 还是 master
 
-    // 开关：是否启用 CDN 加速？(本地调试时设为 false，上传 GitHub 后设为 true)
-    // 建议：上传前改为 true，速度会快非常多！
-    const USE_CDN = false; 
+    // 🔴 智能开关：自动检测是否需要 CDN
+    // 如果是本地打开 (file:// 或 localhost)，强制关闭 CDN
+    // 如果是线上打开 (github.io)，强制开启 CDN
+    const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:';
+    const USE_CDN = !isLocal; 
 
     // 工具：生成视频链接
     function getVideoUrl(path) {
-        if (!USE_CDN) return path;
-        // 移除 path 开头的 ./ 或 /
+        if (!USE_CDN) {
+            // 本地调试模式：直接返回相对路径
+            console.log("正在使用本地文件:", path);
+            return path;
+        }
+        
+        // 线上加速模式：使用 jsDelivr
         const cleanPath = path.replace(/^\.?\//, '');
         return `https://cdn.jsdelivr.net/gh/${GITHUB_USER}/${GITHUB_REPO}@${BRANCH}/${cleanPath}`;
     }
@@ -2201,11 +2332,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const videoSourceList = [
         { src: "assets/videos/video001.mp4", desc: " " },
         { src: "assets/videos/video002.mp4", desc: "世界上还是好包包多" },
-        { src: "assets/videos/xi_1.MOV", desc: "galgame恋与梁家河预告 2103年6月15日习主席150岁大寿全球发售" },
+        { src: "assets/videos/xi_31.mp4", desc: "galgame恋与梁家河预告 2103年6月15日习主席150岁大寿全球发售" },
         { src: "assets/videos/xi_1.mp4", desc: " " },
-        { src: "assets/videos/xi_2.MOV", desc: "富平小黑猫喵啊喵" },
+        { src: "assets/videos/xi_32.mp4", desc: "富平小黑猫喵啊喵" },
         { src: "assets/videos/xi_2.mp4", desc: " " },
-        { src: "assets/videos/xi_3.MOV", desc: "我的相册堆满你的照片" },
+        { src: "assets/videos/xi_33.mp4", desc: "我的相册堆满你的照片" },
         { src: "assets/videos/xi_3.mp4", desc: `习近平望着窗外。<br>阳光正明媚，透过小小的窗口，挥洒进来。<br>恍惚间，习近平仿佛看到阳光中，出现了一个人影。<br>那个人影，不是他的父亲或者母亲，也不是他生命中曾经热爱的某个女人，而是他自己。<br>那个年轻的自己，<br>那个笑起来宛如阳光般澄澈的少年。` },
         { src: "assets/videos/xi_4.mp4", desc: "WAZZUP BEIJING" },
         { src: "assets/videos/xi_5.mp4", desc: "23333333😂😂😂" },
