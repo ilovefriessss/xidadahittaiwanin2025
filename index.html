@@ -2315,35 +2315,37 @@ document.addEventListener('DOMContentLoaded', () => {
     const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:';
     const USE_CDN = !isLocal; 
 
-    // 工具：生成视频链接
+// 工具：生成视频链接 (智能判断版)
     function getVideoUrl(path) {
-        if (!USE_CDN) {
-            // 本地调试模式：直接返回相对路径
-            console.log("正在使用本地文件:", path);
+        // 1. 如果路径已经是 http 开头的(外部链接)，直接返回，不走 GitHub 加速
+        if (path.startsWith('http') || path.startsWith('//')) {
             return path;
         }
-        
-        // 线上加速模式：使用 jsDelivr
+
+        // 2. 如果不需要 CDN，直接返回相对路径
+        if (!USE_CDN) return path;
+
+        // 3. 如果是本地文件且需要 CDN，加上 GitHub 前缀
         const cleanPath = path.replace(/^\.?\//, '');
         return `https://cdn.jsdelivr.net/gh/${GITHUB_USER}/${GITHUB_REPO}@${BRANCH}/${cleanPath}`;
     }
 
     // 1. 视频数据库 (已移除 user 字段，文件名建议全部改为 mp4)
     const videoSourceList = [
-        { src: "assets/videos/video001.mp4", desc: " " },
-        { src: "assets/videos/video002.mp4", desc: "世界上还是好包包多" },
+        { src: "https://files.catbox.moe/s21z28.mp4", desc: " " },
+        { src: "https://files.catbox.moe/epytdp.mp4", desc: "世界上还是好包包多" },
         { src: "assets/videos/xi_31.mp4", desc: "galgame恋与梁家河预告 2103年6月15日习主席150岁大寿全球发售" },
-        { src: "assets/videos/xi_1.mp4", desc: " " },
+        { src: "https://files.catbox.moe/m1ef43.mp4", desc: " " },
         { src: "assets/videos/xi_32.mp4", desc: "富平小黑猫喵啊喵" },
-        { src: "assets/videos/xi_2.mp4", desc: " " },
+        { src: "https://files.catbox.moe/t18hfq.mp4", desc: " " },
         { src: "assets/videos/xi_33.mp4", desc: "我的相册堆满你的照片" },
-        { src: "assets/videos/xi_3.mp4", desc: `习近平望着窗外。<br>阳光正明媚，透过小小的窗口，挥洒进来。<br>恍惚间，习近平仿佛看到阳光中，出现了一个人影。<br>那个人影，不是他的父亲或者母亲，也不是他生命中曾经热爱的某个女人，而是他自己。<br>那个年轻的自己，<br>那个笑起来宛如阳光般澄澈的少年。` },
-        { src: "assets/videos/xi_4.mp4", desc: "WAZZUP BEIJING" },
-        { src: "assets/videos/xi_5.mp4", desc: "23333333😂😂😂" },
-        { src: "assets/videos/xi_6.mp4", desc: "🥰🥰🥰" },
-        { src: "assets/videos/xi_7.mp4", desc: "🤗🤗🤗" },
-        { src: "assets/videos/xi_8.mp4", desc: "💑" },
-        { src: "assets/videos/xi_9.mp4", desc: "经典回顾之小笨嘴" },
+        { src: "https://files.catbox.moe/h06bua.mp4", desc: `习近平望着窗外。<br>阳光正明媚，透过小小的窗口，挥洒进来。<br>恍惚间，习近平仿佛看到阳光中，出现了一个人影。<br>那个人影，不是他的父亲或者母亲，也不是他生命中曾经热爱的某个女人，而是他自己。<br>那个年轻的自己，<br>那个笑起来宛如阳光般澄澈的少年。` },
+        { src: "https://files.catbox.moe/y6q1uq.mp4", desc: "WAZZUP BEIJING" },
+        { src: "https://files.catbox.moe/ze0yyo.mp4", desc: "23333333😂😂😂" },
+        { src: "https://files.catbox.moe/pk4n0c.mp4", desc: "🥰🥰🥰" },
+        { src: "https://files.catbox.moe/ocrx73.mp4", desc: "🤗🤗🤗" },
+        { src: "https://files.catbox.moe/b45a3e.mp4", desc: "💑" },
+        { src: "https://files.catbox.moe/k6nul7.mp4", desc: "经典回顾之小笨嘴" },
         { src: "assets/videos/xi_10.mp4", desc: "苍天弃我，我宁成魔！" },
         { src: "assets/videos/xi_11.mp4", desc: "谁来了？" },
         { src: "assets/videos/xi_13.mp4", desc: "咕噜咕噜咕噜...." },
