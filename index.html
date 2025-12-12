@@ -522,6 +522,156 @@
     z-index: 10;
 }
 
+/* =========================================
+   📱 Xi-Tok 底部表情互动区 (Telegram 风格)
+   ========================================= */
+
+/* 1. 调整布局：让视频和表情栏垂直排列 */
+.tiktok-item {
+    display: flex;
+    flex-direction: column;
+    background: #000;
+}
+
+.tiktok-item video {
+    flex: 1; /* 视频占据剩余空间 */
+    width: 100%;
+    /* 这里的 height auto 很重要，防止视频被压扁 */
+    height: auto; 
+    object-fit: contain;
+    background: #000;
+}
+
+/* 2. 底部白色容器 */
+.reaction-wrapper {
+    width: 100%;
+    min-height: 80px; /* 给表情栏留足空间 */
+    background: #fff;
+    padding: 10px 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    z-index: 20;
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+}
+
+/* 3. 已有表情展示行 (胶囊按钮) */
+.active-reactions-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+}
+
+.tg-pill {
+    background: #f0f2f5; /* 类似 TG 的浅灰底 */
+    border-radius: 20px;
+    padding: 4px 10px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: all 0.2s;
+    user-select: none;
+}
+
+.tg-pill:active { transform: scale(0.95); }
+
+/* 选中状态：变成蓝色边框或背景 */
+.tg-pill.selected {
+    background: #e3f2fd;
+    border-color: #0078d7;
+    color: #0078d7;
+}
+
+.tg-emoji { font-size: 18px; }
+.tg-count { font-size: 14px; font-weight: bold; color: #333; }
+.tg-pill.selected .tg-count { color: #0078d7; }
+
+/* 4. 那个“紫色涂鸦”风格的触发按钮 */
+.add-reaction-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    /* 搞个骚气的紫色渐变 */
+    background: radial-gradient(circle, #ff007c, #800040); 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+    margin-left: auto; /* 把它推到最右边 */
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    border: 2px solid #fff;
+    position: absolute; /* 绝对定位在右下角 */
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.add-reaction-btn:hover { transform: translateY(-50%) rotate(90deg); }
+
+/* 5. 弹出式表情选择面板 */
+.emoji-picker-panel {
+    position: absolute;
+    bottom: 100%; /* 弹在白条上方 */
+    left: 0;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+    padding: 15px;
+    display: none; /* 默认隐藏 */
+    flex-wrap: wrap;
+    gap: 15px;
+    box-shadow: 0 -5px 20px rgba(0,0,0,0.1);
+    animation: slideUp 0.2s ease-out;
+}
+
+/* 展开后的动画 */
+@keyframes slideUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.picker-emoji {
+    font-size: 32px;
+    cursor: pointer;
+    transition: transform 0.1s;
+}
+.picker-emoji:hover { transform: scale(1.2); }
+
+/* 下箭头展开按钮 */
+.expand-arrow {
+    width: 32px;
+    height: 32px;
+    background: #e4e6eb;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    color: #666;
+    font-size: 14px;
+}
+
+/* +1 动画优化 */
+.fly-anim {
+    position: absolute;
+    font-size: 24px;
+    color: #ff007c;
+    font-weight: bold;
+    animation: flyUp 0.8s forwards;
+    pointer-events: none;
+    z-index: 999;
+    text-shadow: 1px 1px 0 #fff;
+}
+
     </style>
 </head>
 <body>
@@ -768,7 +918,38 @@
     </div>
 
     <!-- 脚本区域 -->
-    <script>
+    <script type="module">
+
+// ================= Firebase 引入 =================
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore, doc, onSnapshot, updateDoc, increment, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+// 🔴 请把你在 Firebase 控制台复制的配置填在这里！
+const firebaseConfig = {
+  apiKey: "AIzaSyAL7c4Kwq3pp33bTQiyWza-TWM1DmOD19E", // 替换你的
+  authDomain: "xiblogxiblog.firebaseapp.com", // 替换你的
+  projectId: "xiblogxiblog", // 替换你的
+  storageBucket: "xiblogxiblog.firebasestorage.app", // 替换你的
+  messagingSenderId: "949450298460", // 替换你的
+  appId: "1:949450298460:web:462520701a6b0d7f38c299", // 替换你的
+  measurementId: "G-C1EBTTJTZX"
+};
+
+// 初始化 Firebase
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// 暴露全局函数，防止按钮点击失效
+window.enterSite = enterSite;
+window.checkCensorship = checkCensorship;
+window.toggleMusic = toggleMusic;
+window.playNextTrack = playNextTrack;
+window.togglePlayMode = togglePlayMode;
+window.verifyID = verifyID;
+window.submitName = submitName;
+window.nextStep = nextStep;
+window.skipVideo = skipVideo;
+
 // --- 新增：音频状态管理器 ---
        let currentVoice = null;   // 用于存当前的人物语音
        let currentSceneBGM = null; // 用于存当前的场景BGM
@@ -2301,36 +2482,36 @@ function checkCensorship() {
             document.getElementById('giscus-container').appendChild(script);
         }
 
-/* --- Xi-Tok 智能引擎 (CDN加速 + 智能预加载 + 纯净版) --- */
+/* --- Xi-Tok 智能引擎 (Telegram 风格全网互动版) --- */
 document.addEventListener('DOMContentLoaded', () => {
     
-// ================= 配置区域 =================
+    // ================= 配置区域 =================
     const GITHUB_USER = "ilovefriessss"; 
     const GITHUB_REPO = "xidadahittaiwanin2025";
-    const BRANCH = "main"; // ⚠️请确认GitHub上是 main 还是 master
+    const BRANCH = "main"; 
+    const USE_CDN = false; // 你的视频大多是外链，这里关掉省事
 
-    // 🔴 智能开关：自动检测是否需要 CDN
-    // 如果是本地打开 (file:// 或 localhost)，强制关闭 CDN
-    // 如果是线上打开 (github.io)，强制开启 CDN
-    const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:';
-    const USE_CDN = !isLocal; 
-
-// 工具：生成视频链接 (智能判断版)
+    // 工具：生成视频链接
     function getVideoUrl(path) {
-        // 1. 如果路径已经是 http 开头的(外部链接)，直接返回，不走 GitHub 加速
-        if (path.startsWith('http') || path.startsWith('//')) {
-            return path;
-        }
-
-        // 2. 如果不需要 CDN，直接返回相对路径
+        if (path.startsWith('http') || path.startsWith('//')) return path;
         if (!USE_CDN) return path;
-
-        // 3. 如果是本地文件且需要 CDN，加上 GitHub 前缀
         const cleanPath = path.replace(/^\.?\//, '');
         return `https://cdn.jsdelivr.net/gh/${GITHUB_USER}/${GITHUB_REPO}@${BRANCH}/${cleanPath}`;
     }
 
-    // 1. 视频数据库 (已移除 user 字段，文件名建议全部改为 mp4)
+    // 工具：生成安全的数据库 Key
+    function sanitizeKey(url) {
+        return url.replace(/[^a-zA-Z0-9]/g, '');
+    }
+
+    // 1. 完整表情列表 (23个)
+    const FULL_EMOJIS = [
+        "😁", "😇", "😍", "🥰", "😎", "😭", "😱", 
+        "😥", "🤮", "💩", "😈", "👍", "✍️", "🎅", 
+        "🙈", "🙉", "🙊", "☃️", "❤️", "🆒", "🤓", "🌭", "🗿"
+    ];
+
+    // 2. 视频数据库
     const videoSourceList = [
         { src: "https://files.catbox.moe/s21z28.mp4", desc: " " },
         { src: "https://files.catbox.moe/epytdp.mp4", desc: "世界上还是好包包多" },
@@ -2346,12 +2527,14 @@ document.addEventListener('DOMContentLoaded', () => {
         { src: "https://files.catbox.moe/ocrx73.mp4", desc: "🤗🤗🤗" },
         { src: "https://files.catbox.moe/b45a3e.mp4", desc: "💑" },
         { src: "https://files.catbox.moe/k6nul7.mp4", desc: "经典回顾之小笨嘴" },
-        { src: "assets/videos/xi_10.mp4", desc: "苍天弃我，我宁成魔！" },
+        { src: "https://files.catbox.moe/y0ewyv.mp4", desc: "苍天弃我，我宁成魔！" },
         { src: "assets/videos/xi_11.mp4", desc: "谁来了？" },
-        { src: "assets/videos/xi_13.mp4", desc: "咕噜咕噜咕噜...." },
+        { src: "https://streamable.com/e/4zenu3?", desc: "咕噜咕噜咕噜...." },
         { src: "assets/videos/xi_14.mp4", desc: "走了~" },
-        { src: "assets/videos/xi_15.mp4", desc: "翻墙反习穷傻逼支那猪怕了没" },
+        { src: "https://streamable.com/e/i98hdj?", desc: "翻墙反习穷傻逼支那猪怕了没" },
         { src: "assets/videos/xi_16.mp4", desc: "哈哈 我看见你了" },
+        { src: "https://streamable.com/e/e3ge8z?", desc: "有丶帅" },
+        { src: "https://streamable.com/e/0w89s7?", desc: "想给这两个侮辱习主席的倭女栓到苏北农村狗屋里，由我插了第一次后再让一个连的解放军战士光着膀子在习总的画像前排着队轮流对她们内射，睡觉拉屎也戴着口球蒙住眼睛，最大功率每天不间断播放习近平新时代特色社会主义有声书" },
         { src: "assets/videos/xi22.mp4", desc: " ` 可怜你李克强,有眼无珠 ` " },
         { src: "assets/videos/xi21.mp4", desc: "微笑 帅哥哥" },
         { src: "assets/videos/xi20.mp4", desc: "幽魂魔尊和乐土仙尊" },
@@ -2360,7 +2543,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const feedContainer = document.getElementById('tiktok-feed');
     let currentQueue = []; 
 
-    // 2. 洗牌算法
+    // 3. 洗牌算法
     function shuffleArray(array) {
         let arr = JSON.parse(JSON.stringify(array));
         for (let i = arr.length - 1; i > 0; i--) {
@@ -2370,104 +2553,254 @@ document.addEventListener('DOMContentLoaded', () => {
         return arr;
     }
 
-    // 3. 视频节点生成器 (已移除 user 部分)
+    // 4. 获取用户对该视频的投票状态
+    // 返回: 用户选中的 emoji (字符串) 或 null
+    function getUserVote(docId) {
+        return localStorage.getItem(`vote_${docId}`);
+    }
+
+    // 5. 创建视频节点 (重构版 UI)
     function createVideoElement(videoData) {
         const div = document.createElement('div');
         div.className = 'tiktok-item';
         
-        // 使用 getVideoUrl 处理 CDN 链接
         const finalUrl = getVideoUrl(videoData.src);
+        const docId = sanitizeKey(videoData.src);
 
-        // 注意：preload="metadata" 比 none 好，它会加载时长和首帧，但不下载整个文件
-        // data-src 依然保留用于懒加载逻辑
+        // 构建 HTML 结构
         div.innerHTML = `
             <video controls loop playsinline webkit-playsinline preload="none" data-src="${finalUrl}"></video>
-            <div class="tiktok-overlay">
+            
+            <div class="tiktok-overlay" style="bottom: 100px;"> <!-- 文案稍微抬高 -->
                 <p class="tt-desc">${videoData.desc}</p>
             </div>
+
+            <!-- 底部白色互动区 -->
+            <div class="reaction-wrapper">
+                <!-- 1. 显示已有点赞的行 -->
+                <div class="active-reactions-row" id="row-${docId}">
+                    <!-- 默认占位符 -->
+                    <div class="tg-pill" data-emoji="😁" onclick="window.handleReaction(this, '${docId}', '😁')">
+                        <span class="tg-emoji">😁</span>
+                        <span class="tg-count">1</span>
+                    </div>
+                </div>
+
+                <!-- 2. 紫色涂鸦触发按钮 (✨) -->
+                <div class="add-reaction-btn" onclick="window.togglePicker('${docId}')">✨</div>
+
+                <!-- 3. 隐藏的表情选择面板 -->
+                <div class="emoji-picker-panel" id="picker-${docId}">
+                    <!-- JS 动态填充 -->
+                </div>
+            </div>
         `;
+
+        // 填充表情选择面板 (分两步：前7个 + 箭头)
+        const picker = div.querySelector(`#picker-${docId}`);
+        renderPicker(picker, docId, false); // false = 初始不展开
+
+        // ★★★ Firebase 实时监听 ★★★
+        const docRef = doc(db, "reactions", docId);
+        onSnapshot(docRef, (docSnap) => {
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                updateReactionRow(div, docId, data);
+            }
+        });
+
         return div;
     }
 
-    // 4. 核心：预加载下一个视频 (解决卡顿的关键)
+    // 6. 渲染选择面板逻辑
+    function renderPicker(container, docId, isExpanded) {
+        container.innerHTML = '';
+        
+        // 决定显示多少个
+        const listToShow = isExpanded ? FULL_EMOJIS : FULL_EMOJIS.slice(0, 7);
+        
+        listToShow.forEach(emoji => {
+            const span = document.createElement('span');
+            span.className = 'picker-emoji';
+            span.innerText = emoji;
+            span.onclick = () => {
+                // 模拟点击胶囊的效果
+                const dummyBtn = { getBoundingClientRect: () => span.getBoundingClientRect() };
+                window.handleReaction(dummyBtn, docId, emoji);
+                // 选完关闭面板
+                container.style.display = 'none';
+            };
+            container.appendChild(span);
+        });
+
+        // 如果未展开，加一个下箭头
+        if (!isExpanded) {
+            const arrow = document.createElement('div');
+            arrow.className = 'expand-arrow';
+            arrow.innerHTML = '﹀';
+            arrow.onclick = (e) => {
+                e.stopPropagation(); // 防止冒泡
+                renderPicker(container, docId, true); // 重新渲染为展开状态
+            };
+            container.appendChild(arrow);
+        }
+    }
+
+    // 7. 更新胶囊行 (根据数据库数据)
+    function updateReactionRow(div, docId, data) {
+        const row = div.querySelector(`#row-${docId}`);
+        const userVote = getUserVote(docId); // 获取当前用户投了谁
+        
+        // 总是确保 😁 存在 (至少显示1)
+        if (!data['😁']) data['😁'] = 1;
+
+        // 清空当前行，重新排序渲染 (按数量从多到少，或者固定顺序)
+        // 这里我们按固定顺序 FULL_EMOJIS 渲染，防止跳动
+        row.innerHTML = '';
+
+        FULL_EMOJIS.forEach(emoji => {
+            const count = data[emoji] || 0;
+            // 只有 count > 0 或者是用户刚才点的，才显示在白条上
+            if (count > 0 || emoji === userVote) {
+                const isSelected = (emoji === userVote);
+                row.innerHTML += `
+                    <div class="tg-pill ${isSelected ? 'selected' : ''}" 
+                         onclick="window.handleReaction(this, '${docId}', '${emoji}')">
+                        <span class="tg-emoji">${emoji}</span>
+                        <span class="tg-count">${count}</span>
+                    </div>
+                `;
+            }
+        });
+    }
+
+    // 8. 全局：打开/关闭面板
+    window.togglePicker = function(docId) {
+        const picker = document.getElementById(`picker-${docId}`);
+        if (picker.style.display === 'flex') {
+            picker.style.display = 'none';
+        } else {
+            // 先关闭其他所有打开的面板(可选)
+            document.querySelectorAll('.emoji-picker-panel').forEach(p => p.style.display = 'none');
+            picker.style.display = 'flex';
+        }
+    };
+
+    // 9. 全局：处理点击互动 (核心互斥逻辑)
+    window.handleReaction = async function(btn, docId, emoji) {
+        // 动画
+        if(typeof AudioEngine !== 'undefined') AudioEngine.playClickSound();
+        
+        // 浮动动画
+        const floatEl = document.createElement('div');
+        floatEl.className = 'fly-anim';
+        floatEl.innerText = emoji; // 飘表情本身
+        const rect = btn.getBoundingClientRect ? btn.getBoundingClientRect() : btn.target.getBoundingClientRect(); // 兼容
+        floatEl.style.left = rect.left + 'px';
+        floatEl.style.top = rect.top - 20 + 'px';
+        document.body.appendChild(floatEl);
+        setTimeout(() => floatEl.remove(), 800);
+
+        // --- 逻辑处理 ---
+        const currentUserVote = getUserVote(docId);
+        const docRef = doc(db, "reactions", docId);
+
+        try {
+            // 场景 1: 用户没投过票 -> 新增
+            if (!currentUserVote) {
+                await updateDoc(docRef, { [emoji]: increment(1) }).catch(async (e) => {
+                    if (e.code === 'not-found') await setDoc(docRef, { [emoji]: 1 });
+                });
+                localStorage.setItem(`vote_${docId}`, emoji);
+            }
+            // 场景 2: 用户点了一样的 -> 取消投票 (Toggle off)
+            else if (currentUserVote === emoji) {
+                await updateDoc(docRef, { [emoji]: increment(-1) });
+                localStorage.removeItem(`vote_${docId}`);
+            }
+            // 场景 3: 用户点了不一样的 -> 换票 (旧的-1, 新的+1)
+            else {
+                await updateDoc(docRef, { 
+                    [currentUserVote]: increment(-1),
+                    [emoji]: increment(1)
+                });
+                localStorage.setItem(`vote_${docId}`, emoji);
+            }
+        } catch (e) {
+            console.error("Firebase Error:", e);
+        }
+    };
+
+    // 10. 预加载 & 无限流 (保持不变)
     function preloadNextVideo(currentItem) {
         const nextItem = currentItem.nextElementSibling;
         if (nextItem) {
             const nextVideo = nextItem.querySelector('video');
-            // 如果下一个视频还没加载，现在就开始加载
             if (!nextVideo.src && nextVideo.dataset.src) {
-                console.log("🚀 偷偷预加载下一个视频...");
                 nextVideo.src = nextVideo.dataset.src;
-                nextVideo.preload = "auto"; // 强制开始缓冲
+                nextVideo.preload = "auto"; 
             }
         }
     }
 
-    // 5. 追加视频逻辑
     function appendNextBatch() {
-        if (currentQueue.length === 0) {
-            currentQueue = shuffleArray(videoSourceList);
-        }
+        if (currentQueue.length === 0) currentQueue = shuffleArray(videoSourceList);
         const videoData = currentQueue.shift(); 
         const el = createVideoElement(videoData);
         feedContainer.appendChild(el);
         observer.observe(el);
     }
 
-    // 6. 观察者逻辑 (集成预加载)
     let observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             const item = entry.target;
             const video = item.querySelector('video');
-            
             if (entry.isIntersecting) {
-                // === 进入屏幕 ===
-                
-                // 1. 加载并播放当前视频
                 if (!video.src && video.dataset.src) {
                     video.src = video.dataset.src;
+                    video.load();
                 }
-                
-                const playPromise = video.play();
-                if (playPromise !== undefined) {
-                    playPromise.catch(e => {
-                        console.log("等待交互以播放");
-                    });
-                }
-
-                // 2. 【关键】预加载下一个视频
+                video.play().catch(e => {});
                 preloadNextVideo(item);
-
-                // 3. 无限流追加
                 if (item.nextElementSibling === null) {
                     appendNextBatch();
-                    appendNextBatch(); // 多追加一个作为缓冲
+                    appendNextBatch(); 
                 }
-
             } else {
-                // === 离开屏幕 ===
                 video.pause();
-                // 不建议清空 src，否则滑回来又要重新缓冲，会很卡
             }
         });
-    }, {
-        threshold: 0.6 
-    });
+    }, { threshold: 0.6 });
 
-    // --- 初始化 ---
+    // 初始化
     appendNextBatch();
     appendNextBatch();
     appendNextBatch();
-
-    // 立即激活第一个视频，不需要等观察者
     const firstItem = feedContainer.querySelector('.tiktok-item');
     if (firstItem) {
         const v = firstItem.querySelector('video');
         v.src = v.dataset.src;
-        v.preload = "auto"; // 第一个视频全力加载
-        // 尝试预加载第二个
+        v.preload = "auto";
         preloadNextVideo(firstItem);
     }
 });
+
+// ==========================================
+// 🩹 补丁：把函数暴露给 HTML (解决 onclick 报错)
+// ==========================================
+
+// 必须确保这些函数在你的代码里已经定义了！
+window.enterSite = enterSite;
+window.checkCensorship = checkCensorship;
+window.toggleMusic = toggleMusic;
+window.playNextTrack = playNextTrack;
+window.togglePlayMode = togglePlayMode;
+window.verifyID = verifyID;
+window.submitName = submitName;
+window.nextStep = nextStep;
+window.skipVideo = skipVideo;
+
+// 如果你的 Xi-Tok 里也有 onclick 调用，也要加：
+// window.handleReaction = handleReaction; (这一行我在之前的代码里已经写在 window 上了，不用管)
 
     </script>
