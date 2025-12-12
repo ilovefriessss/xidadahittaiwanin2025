@@ -358,7 +358,7 @@
                如果想要像手机一样竖长，可以设固定高度比如 600px。
                如果想要随视频比例自适应，这在CSS里比较难，建议给个固定高度体验最好。
             */
-            height: 600px; 
+            height: 800px; 
     
             background: #000;
             overflow-y: scroll;
@@ -387,16 +387,20 @@
             align-items: center;
         }
 
+
         .tiktok-item video {
+            flex: 1; /* 占据剩余空间 */
             width: 100%;
-            height: 100%;
-            object-fit: contain; /* 保持比例，黑边填充 */
+            height: 0; /* 关键技巧：设为0让flex重新计算高度，防止视频把父容器撑爆 */
+            min-height: 0; /* 同上，防止溢出 */
+            object-fit: contain; /* 保持比例 */
+            background: #000;
         }
 
         /* 浮层样式保持不变 */
         .tiktok-overlay {
             position: absolute;
-            bottom: 50px;
+            bottom: 90px;
             left: 10px;
             right: 10px;
             text-align: left;
@@ -2576,15 +2580,11 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
 
             <!-- 底部白色互动区 -->
-            <div class="reaction-wrapper">
-                <!-- 1. 显示已有点赞的行 -->
-                <div class="active-reactions-row" id="row-${docId}">
-                    <!-- 默认占位符 -->
-                    <div class="tg-pill" data-emoji="😁" onclick="window.handleReaction(this, '${docId}', '😁')">
-                        <span class="tg-emoji">😁</span>
-                        <span class="tg-count">1</span>
-                    </div>
-                </div>
+        <div class="reaction-wrapper">
+            <!-- 1. 显示行：初始留空，完全由 Firebase 数据决定 -->
+            <div class="active-reactions-row" id="row-${docId}">
+
+            </div>
 
                 <!-- 2. 紫色涂鸦触发按钮 (✨) -->
                 <div class="add-reaction-btn" onclick="window.togglePicker('${docId}')">✨</div>
@@ -2651,8 +2651,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const row = div.querySelector(`#row-${docId}`);
         const userVote = getUserVote(docId); // 获取当前用户投了谁
         
-        // 总是确保 😁 存在 (至少显示1)
-        if (!data['😁']) data['😁'] = 1;
 
         // 清空当前行，重新排序渲染 (按数量从多到少，或者固定顺序)
         // 这里我们按固定顺序 FULL_EMOJIS 渲染，防止跳动
@@ -2691,15 +2689,12 @@ document.addEventListener('DOMContentLoaded', () => {
         // 动画
         if(typeof AudioEngine !== 'undefined') AudioEngine.playClickSound();
         
-        // 浮动动画
-        const floatEl = document.createElement('div');
-        floatEl.className = 'fly-anim';
-        floatEl.innerText = emoji; // 飘表情本身
-        const rect = btn.getBoundingClientRect ? btn.getBoundingClientRect() : btn.target.getBoundingClientRect(); // 兼容
-        floatEl.style.left = rect.left + 'px';
-        floatEl.style.top = rect.top - 20 + 'px';
-        document.body.appendChild(floatEl);
-        setTimeout(() => floatEl.remove(), 800);
+        const targetSpan = btn.querySelector ? btn.querySelector('.reaction-count') : null;
+        if (targetSpan) {
+            let currentVal = parseInt(targetSpan.innerText);
+            // 这里只是简单的视觉欺骗，实际准确数字等 Firebase 回调
+            // targetSpan.innerText = currentVal + 1; 
+        }
 
         // --- 逻辑处理 ---
         const currentUserVote = getUserVote(docId);

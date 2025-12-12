@@ -5,7 +5,9 @@
 ![Project Status](https://img.shields.io/badge/Status-Accelerator-ff007c)
 ![Style](https://img.shields.io/badge/Style-Vaporwave%20%2F%20Jirai--Kei-00f3ff)
 
-这是一个基于 HTML5, CSS3 和原生 JavaScript ，代码全部由Gemini3构建的单页应用（SPA）。
+这是一个基于 HTML5, CSS3 和原生 JavaScript ，代码全部由Gemini3构建的单页应用（SPA）
+
+每次想分开为html css js都会出毛病 我真服了 不改了，整部项目共花费十五天基本完成，剩下的就是剧情和图片和语音的优化及更新视频了，可喜可贺。
 
 
 ————————————ai生成的介绍-----懒得改了。。
@@ -19,13 +21,7 @@
     *   由原生 JS 驱动的轻量级 AVG 引擎。
     *   打字机文本效果与复古 8-bit 音效合成。
     *   多分支剧情：包含 Happy End, Bad End 以及隐藏的 True End。
-*   **彩蛋系统**：
-    <!--
-        *   DVD 碰撞屏幕保护程序（作为 True End 触发器）。
-    *   逼真的伪装系统警告界面。
--->
-*   **响应式设计**：适配桌面端与移动端浏览。
-——————————————————
+
 ## 🚀 如何运行 (How to Run)
 
 ### 在线访问 (GitHub Pages)
